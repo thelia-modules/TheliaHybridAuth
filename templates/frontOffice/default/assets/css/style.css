@@ -1,0 +1,11 @@
+#social-login, #social-register{
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+    font-size: 16px;
+    font-weight: 600;
+}
+.link-social-login{
+    padding: 0 5px;
+}

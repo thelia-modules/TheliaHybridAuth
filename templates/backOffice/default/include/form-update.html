@@ -1,0 +1,51 @@
+{form name="update.provider"}
+  <form method="POST" class="js-form-edit" action="">
+    {form_hidden_fields form=$form}
+
+    {form_field form=$form field='success_url'}
+      <input type="hidden" name="{$name}" value="{url path='/admin/module/TheliaHybridAuth'}" />
+    {/form_field}
+
+    {form_field form=$form field='error_url'}
+      <input type="hidden" name="{$name}" value="{url path='/admin/module/TheliaHybridAuth'}" />
+    {/form_field}
+
+    <div class="modal fade js-modal-edit {if $form_error}modal-force-show{/if}" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header bg-primary">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <strong class="modal-title text-uppercase">{intl l="Edit a provider" d="theliahybridauth.bo.default"}</strong>
+          </div>
+          <div class="modal-body">
+            {if $form_error && $form_error_message}
+              <div class="alert alert-danger">{$form_error_message}</div>
+            {/if}
+            {form_field field='id'}
+              <div class="form-group {if $error}has-error{/if}">
+                <label for="{$label_attr.for}">{$label}</label>
+                <input type="text" id="{$label_attr.for}" class="form-control" name="{$name}" value="{$value}"/>
+              </div>
+            {/form_field}
+            {form_field field='secret'}
+              <div class="form-group {if $error}has-error{/if}">
+                <label for="{$label_attr.for}">{$label}</label>
+                <input type="text" id="{$label_attr.for}" class="form-control" name="{$name}" value="{$value}"/>
+              </div>
+            {/form_field}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+              <span class="glyphicon glyphicon-remove"></span>
+              {intl l="Close action" d="theliahybridauth.bo.default"}
+            </button>
+            <button type="submit" class="btn btn-success">
+              <span class="glyphicon glyphicon-ok"></span>
+              {intl l="Edit action" d="theliahybridauth.bo.default"}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+{/form}

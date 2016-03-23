@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<config xmlns="http://thelia.net/schema/dic/config"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://thelia.net/schema/dic/config http://thelia.net/schema/dic/config/thelia-1.0.xsd">
+
+    <loops>
+        <loop name="providers.list" class="TheliaHybridAuth\Loop\ListProviders" />
+        <loop name="customer.providers" class="TheliaHybridAuth\Loop\CustomerProviders" />
+    </loops>
+
+    <forms>
+        <form name="register.hybrid.auth" class="TheliaHybridAuth\Form\Register" />
+        <form name="hybridauth.confirm.password" class="TheliaHybridAuth\Form\ConfirmPassword" />
+        <form name="create.provider" class="TheliaHybridAuth\Form\CreateProvider"/>
+        <form name="base.provider" class="TheliaHybridAuth\Form\BaseProvider"/>
+        <form name="update.provider" class="TheliaHybridAuth\Form\UpdateProvider"/>
+    </forms>
+
+    <hooks>
+        <hook id="hybridauth.register.hook" class="TheliaHybridAuth\Hook\FrontHook" scope="request">
+            <tag name="hook.event_listener" event="register.top" type="front" method="onRegisterTop"/>
+            <argument type="service" id="request" />
+        </hook>
+        <hook id="hybridauth.login.hook" class="TheliaHybridAuth\Hook\FrontHook" scope="request">
+            <tag name="hook.event_listener" event="login.form-top" type="front" method="onLoginFormTop"/>
+            <argument type="service" id="request" />
+        </hook>
+        <hook id="hybridauth.login.dialog.hook" class="TheliaHybridAuth\Hook\FrontHook" scope="request">
+            <tag name="hook.event_listener" event="login.main-bottom" type="front" method="onLoginMainBottom"/>
+            <argument type="service" id="request" />
+        </hook>
+        <hook id="hybridauth.login.js.dialog.hook" class="TheliaHybridAuth\Hook\FrontHook" scope="request">
+            <tag name="hook.event_listener" event="login.javascript-initialization" type="front" method="onLoginJavascriptInitialization"/>
+            <argument type="service" id="request" />
+        </hook>
+        <hook id="hybridauth.hook.back" class="TheliaHybridAuth\Hook\BackHook" scope="request">
+            <tag name="hook.event_listener" event="module.configuration" type="back" method="onModuleConfiguration"/>
+        </hook>
+        <hook id="hybridauth.hook.back.js" class="TheliaHybridAuth\Hook\BackHook" scope="request">
+            <tag name="hook.event_listener" event="module.config-js" type="back" method="onModuleConfigJs"/>
+        </hook>
+        <hook id="hybridauth.account.hook" class="TheliaHybridAuth\Hook\FrontHook" scope="request">
+            <tag name="hook.event_listener" event="account.additional" type="front" method="onAccountAdditional"/>
+            <argument type="service" id="request" />
+        </hook>
+        <hook id="hybridauth.account.js.hook" class="TheliaHybridAuth\Hook\FrontHook" scope="request">
+            <tag name="hook.event_listener" event="account.after-javascript-include" type="front" method="onAccountAfterJavascriptInclude"/>
+            <argument type="service" id="request" />
+        </hook>
+        <hook id="hybridauth.login.css" class="TheliaHybridAuth\Hook\FrontHook" scope="request">
+            <tag name="hook.event_listener" event="main.stylesheet" type="front" method="onMainStylesheet"/>
+            <argument type="service" id="request" />
+        </hook>
+    </hooks>
+</config>

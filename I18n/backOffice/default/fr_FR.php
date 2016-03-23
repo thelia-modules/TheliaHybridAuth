@@ -1,0 +1,26 @@
+<?php
+
+return array(
+    'Action' => 'Action',
+    'Activated' => 'Activé',
+    'Add a provider' => 'Ajouter un fournisseur',
+    'Add action' => 'Ajouter',
+    'Are you sure you want to delete this provider ?' => 'Etes vous sur de vouloir supprimer ce fournisseur ?',
+    'Close' => 'Fermer',
+    'Close action' => 'Fermer',
+    'Create' => 'Créer',
+    'Deactivate %name' => 'Désactiver %name',
+    'Delete' => 'Supprimer',
+    'Delete provider' => 'Supprimer',
+    'Edit' => 'Editer',
+    'Edit a provider' => 'Edition d\'un fournisseur',
+    'Edit action' => 'Editer',
+    'Error, check your id and secret for %provider' => 'Erreur, vérifiez votre id et mot de passe pour %provider',
+    'Name' => 'Nom',
+    'Providers list' => 'Liste des fournisseurs',
+    'Test' => 'Tester',
+    'The id and secret for %provider are valid' => 'L\'id et le mot de passe pour %provider sont valides',
+    'activate %name' => 'activer %name',
+    'activation' => 'activation',
+    'deactivation' => 'Désactivation',
+);

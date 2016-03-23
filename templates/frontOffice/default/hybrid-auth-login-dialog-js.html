@@ -1,0 +1,10 @@
+<script>
+  $(function() {
+    {if $smarty.get.confirm_password}
+      $('#password_confirm_dialog').modal('show');
+    {/if}
+    {if $smarty.get.redirect_hybridauth_register}
+      $('#redirect_hybridauth_register').modal('show');
+    {/if}
+  });
+</script>

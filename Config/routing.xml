@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<routes xmlns="http://symfony.com/schema/routing"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
+
+    <route id="hybridauth.connect" path="/login/hybridauth" methods="GET">
+        <default key="_controller">TheliaHybridAuth\Controller\HybridAuthCustomerController::loginAction</default>
+    </route>
+
+    <route id="hybridauth.connect.post" path="/login/hybridauth" methods="POST">
+        <default key="_controller">TheliaHybridAuth\Controller\HybridAuthCustomerController::linkAction</default>
+    </route>
+
+    <route id="hybridauth.register.get" path="/register/hybridauth" methods="GET">
+        <default key="_controller">TheliaHybridAuth\Controller\HybridAuthCustomerController::viewRegisterAction</default>
+    </route>
+
+    <route id="hybridauth.register.post" path="/register/hybridauth" methods="POST">
+        <default key="_controller">TheliaHybridAuth\Controller\HybridAuthCustomerController::createAction</default>
+    </route>
+
+    <route id="hybridauth.toggle-activation" path="/admin/module/TheliaHybridAuth/toggle-activation/{providerName}">
+        <default key="_controller">TheliaHybridAuth\Controller\Configuration::toggleActivationAction</default>
+    </route>
+
+    <route id="hybridauth.add.provider" path="/admin/module/TheliaHybridAuth/add">
+        <default key="_controller">TheliaHybridAuth\Controller\Configuration::addProviderAction</default>
+    </route>
+
+    <route id="hybridauth.update.provider.get" path="/admin/module/TheliaHybridAuth/update/{providerName}" methods="GET">
+        <default key="_controller">TheliaHybridAuth\Controller\Configuration::viewAction</default>
+    </route>
+
+    <route id="hybridauth.update.provider.post" path="/admin/module/TheliaHybridAuth/update/{providerName}" methods="POST">
+        <default key="_controller">TheliaHybridAuth\Controller\Configuration::updateProviderAction</default>
+    </route>
+
+    <route id="hybridauth.delete.provider" path="/admin/module/TheliaHybridAuth/delete/{providerName}">
+        <default key="_controller">TheliaHybridAuth\Controller\Configuration::deleteProviderAction</default>
+    </route>
+
+    <route id="hybridauth.test.provider" path="/admin/module/TheliaHybridAuth/test/{providerName}">
+        <default key="_controller">TheliaHybridAuth\Controller\Configuration::testProviderAction</default>
+    </route>
+
+    <route id="hybridauth.social.remove" path="/account/hybridauth/remove/{providerName}">
+        <default key="_controller">TheliaHybridAuth\Controller\HybridAuthCustomerController::removeAssociationAction</default>
+    </route>
+</routes>

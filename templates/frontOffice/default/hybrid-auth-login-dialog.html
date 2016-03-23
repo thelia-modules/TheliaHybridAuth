@@ -1,0 +1,54 @@
+{assign var="store_name" value={config key="store_name"}}
+
+<div class="modal" id="password_confirm_dialog" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                <h3>{intl l="Associate your account with %provider" d="theliahybridauth.fo.default" provider={$smarty.get.provider}}</h3>
+            </div>
+            <div class="modal-body">
+                <p>{intl l="This email adress is already associated with a %store_name account, please confirm your password" store_name={$store_name} d="theliahybridauth.fo.default"}</p>
+                {form name="hybridauth.confirm.password"}
+                <form id="form-confirm-password" class="form-horizontal" action="{url path="/login/hybridauth"}" method="post">
+                    {if $form_error}<div class="alert alert-danger">{$form_error_message}</div>{/if}
+                    {form_hidden_fields}
+                    {form_field field='success_url'}
+                        <input type="hidden" name="{$name}" value="{navigate to="previous"}" /> {* the url the user is redirected to on registration success *}
+                    {/form_field}
+                    {form_field field='error_url'}
+                        <input type="hidden" name="{$name}" value="{navigate to="current"}" />
+                    {/form_field}
+                    {form_field field="password"}
+                        <div class="form-group {if $form_error} has-error{/if}">
+                            <label for="{$label_attr.for}" class="control-label col-md-4">{$label}</label>
+                            <div class="control-input col-md-8">
+                                <input type="password" name="{$name}" id="{$label_attr.for}" class="form-control input-sm" maxlength="255" autocomplete="off"{if !isset($error_focus)} autofocus{/if}>
+                            </div>
+                            <span class="help-block col-md-3">
+                                <a href="{url path="/password"}" data-toggle="confirmation" class="forgot-password">{intl l="Forgot your Password?"}</a>
+                            </span>
+                        </div>
+                    {/form_field}
+                    <div class="group-btn">
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-chevron-right"></i> {intl l="Next"}</button>
+                    </div>
+                </form>
+                {/form}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="redirect_hybridauth_register" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+            <div class="modal-body">
+                <p>{intl l="There is no %store_name account with this email adress. You need to register" store_name={$store_name} d="theliahybridauth.fo.default"}
+                    <a class="btn btn-primary" href={url path="/register/hybridauth?provider={$smarty.get.provider}"}> {intl l="Register now" d="theliahybridauth.fo.default"}</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

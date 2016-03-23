@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database defaultIdMethod="native" name="thelia"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="../../../core/vendor/propel/propel/resources/xsd/database.xsd" >
+
+    <table name="hybrid_auth" namespace="TheliaHybridAuth\Model">
+        <column autoIncrement="true" name="id" primaryKey="true" required="true" type="INTEGER" />
+        <column name="provider" required="true" size="255" type="VARCHAR" />
+        <column name="token" required="true" size="255" type="VARCHAR" />
+        <column name="customer_id" required="true" type="INTEGER" />
+        <foreign-key foreignTable="customer" name="fk_customer_id" onDelete="CASCADE" onUpdate="RESTRICT">
+            <reference foreign="id" local="customer_id" />
+        </foreign-key>
+    </table>
+    <external-schema filename="local/config/schema.xml" referenceOnly="true" />
+</database>

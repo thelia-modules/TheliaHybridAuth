@@ -1,0 +1,58 @@
+{javascripts file="assets/js/bootstrap-switch/bootstrap-switch.js"}
+  <script src="{$asset_url}"></script>
+{/javascripts}
+<script>
+  (function ($, $provider){
+
+    // create a provider
+    $provider.on('click', '.js-action-create', function () {
+      $provider.find('.js-modal-create').modal('show');
+    });
+
+    // delete a provider
+
+    $provider.on('click', '.js-action-delete', function(){
+      $provider.find('.js-modal-delete').modal('show');
+      $provider.find('.js-form-delete').attr('action', $(this).data('action'));
+    });
+
+    // update a provider
+    $provider.on('click', '.js-action-edit', function () {
+      $provider.find('.form-provider-name').html($(this).data('name'));
+      $provider.find('.js-form-edit').attr('action', $(this).data('action'));
+
+      $.ajax({
+        url: $(this).data('action'),
+        type: 'GET',
+        dataType: 'html',
+        target: this,
+        success: function(html){
+          $provider.find('.js-form-edit').html($(html).html());
+          $provider.find('.js-modal-edit').modal('show');
+        },
+        error: function(xhr, ajaxOptions, thrownError){
+          alert(thrownError);
+        }
+      });
+    });
+
+    // activate or desactivate provider
+    var url_management = "{url path="/admin/module/TheliaHybridAuth/toggle-activation/"}";
+    $(".provider-activation").on("switch-change", function(e, data){
+
+      var checkbox = $(this);
+
+      $('body').append('<div class="modal-backdrop fade in" id="loading-event"><div class="loading"></div></div>');
+      $.ajax({
+        url: url_management+$(this).data('name')
+      }).always(function(){
+        $("#loading-event").remove();
+      }).fail(function(jqXHR, textStatus, errorThrown){
+        checkbox.bootstrapSwitch('toggleState', true);
+        $('#provider-failed-body').html(jqXHR.responseJSON.error);
+        $("#provider-failed").modal("show");
+      });
+
+    });
+  }(jQuery, jQuery("#module-theliahybridauth")));
+</script>
