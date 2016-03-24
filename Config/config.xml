@@ -6,7 +6,6 @@
 
     <loops>
         <loop name="providers.list" class="TheliaHybridAuth\Loop\ListProviders" />
-        <loop name="customer.providers" class="TheliaHybridAuth\Loop\CustomerProviders" />
     </loops>
 
     <forms>

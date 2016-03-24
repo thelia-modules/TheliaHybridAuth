@@ -1,5 +1,5 @@
 {
-  "name": "your-vendor/thelia-hybrid-auth-module",
+  "name": "thelia/thelia-hybrid-auth-module",
   "license": "LGPL-3.0+",
   "type": "thelia-module",
   "require": {

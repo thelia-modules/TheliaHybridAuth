@@ -1,43 +1,46 @@
 <div class="panel-body" id="socials-association">
+    {if isset($error)}
+        <div class="alert alert-danger col-md-12">
+            {intl l="Oops an error occured : %e" e={$error} d="theliahybridauth.fo.default"}
+        </div>
+    {/if}
     {ifloop rel="customer-providers"}
     <p>
         {intl l="Your account is associated with the following social networks :" d="theliahybridauth.fo.default"}
     </p>
     <div class="row">
-        {loop type="customer" name="customer-info"}
-            {loop type="customer.providers" name="customer-providers" customer_id="{$ID}"}
-                <div class="col-md-4">
-                    <p><img src="{image source="TheliaHybridAuth" file="assets/images/{$NAME|lower}.png"}" alt="{$NAME}"> {$NAME}</p>
-                </div>
-                <div class ="col-md-4">
-                    <button class="remove-button btn btn-primary" data-name="{$NAME}" data-action="{url path="/account/hybridauth/remove/{$NAME}"}">{intl l="Remove association" d="theliahybridauth.fo.default"}</button>
-                </div>
-                <div class="col-md-4"></div>
-                <div class="clearfix"></div>
-                <div id="modal-{$NAME}" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                <strong class="modal-title text-uppercase">{intl l="Remove %name association" name={$NAME} d="theliahybridauth.fo.default"}</strong>
-                            </div>
-                            <div class="modal-body">
-                                <p>{intl l="You are about to remove the association between your account and %name. This means you won't be able to connect with %name anymore, unless you associate your account again" name={$NAME} d="theliahybridauth.fo.default"}</p>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary modal-cancel" data-dismiss="modal">
-                                    <span class="glyphicon glyphicon-remove"></span>
-                                    {intl l="Cancel" d="theliahybridauth.fo.default"}
-                                </button>
-                                <button type="submit" class="btn btn-success modal-remove">
-                                    <span class="glyphicon glyphicon-ok"></span>
-                                    {intl l="Remove" d="theliahybridauth.fo.default"}
-                                </button>
-                            </div>
+        {loop type="providers.list" name="customer-providers" customer_id="{customer attr="id"}"}
+            <div class="col-md-4">
+                <p><img src="{image source="TheliaHybridAuth" file="assets/images/{$NAME|lower}.png"}" alt="{$NAME}"> {$NAME}</p>
+            </div>
+            <div class ="col-md-4">
+                <button class="remove-button btn btn-primary" data-name="{$NAME}" data-action="{url path="/account/hybridauth/remove/{$NAME}"}">{intl l="Remove association" d="theliahybridauth.fo.default"}</button>
+            </div>
+            <div class="col-md-4"></div>
+            <div class="clearfix"></div>
+            <div id="modal-{$NAME}" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <strong class="modal-title text-uppercase">{intl l="Remove %name association" name={$NAME} d="theliahybridauth.fo.default"}</strong>
+                        </div>
+                        <div class="modal-body">
+                            <p>{intl l="You are about to remove the association between your account and %name. This means you won't be able to connect with %name anymore, unless you associate your account again" name={$NAME} d="theliahybridauth.fo.default"}</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary modal-cancel" data-dismiss="modal">
+                                <span class="glyphicon glyphicon-remove"></span>
+                                {intl l="Cancel" d="theliahybridauth.fo.default"}
+                            </button>
+                            <button type="submit" class="btn btn-success modal-remove">
+                                <span class="glyphicon glyphicon-ok"></span>
+                                {intl l="Remove" d="theliahybridauth.fo.default"}
+                            </button>
                         </div>
                     </div>
                 </div>
-            {/loop}
+            </div>
         {/loop}
     </div>
     {/ifloop}
@@ -48,4 +51,20 @@
             </div>
         </div>
     {/elseloop}
+    {ifloop rel="providers-list-not-associated"}
+    <div class="row">
+        {$ASSOCIATED_PROVIDERS=[]}
+        {loop type="providers.list" name="customer-providers" customer_id="{customer attr="id"}"}
+            {$ASSOCIATED_PROVIDERS[]=$NAME}
+        {/loop}
+        <div class="col-md-12">
+            <p>{intl l="You can also associate your account with :" d="theliahybridauth.fo.default"}</p>
+        </div>
+        <div class="col-md-12">
+            {loop type="providers.list" name="providers-list-not-associated" exclude="{implode(',', $ASSOCIATED_PROVIDERS)}"}
+                <a href="{url path="/hybridauth/associate/{$NAME}"}"><img src="{image source="TheliaHybridAuth" file="assets/images/{$NAME|lower}.png"}" alt="{$NAME}"></a>
+            {/loop}
+        </div>
+    </div>
+    {/ifloop}
 </div>

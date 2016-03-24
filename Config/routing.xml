@@ -47,4 +47,8 @@
     <route id="hybridauth.social.remove" path="/account/hybridauth/remove/{providerName}">
         <default key="_controller">TheliaHybridAuth\Controller\HybridAuthCustomerController::removeAssociationAction</default>
     </route>
+
+    <route id="hybridauth.account.associate" path="/hybridauth/associate/{providerName}">
+        <default key="_controller">TheliaHybridAuth\Controller\HybridAuthCustomerController::AssociationAction</default>
+    </route>
 </routes>

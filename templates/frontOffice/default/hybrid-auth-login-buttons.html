@@ -2,9 +2,7 @@
   <div id="social-login" class="col-md-12">
     <span>{intl l="Login with" d="theliahybridauth.fo.default"}</span>
     {loop type="providers.list" name="providers-list"}
-    {if $ENABLED == true}
       <a class="link-social-login" href="{url path="/login/hybridauth?provider={$NAME}"}"><img src="{image source="TheliaHybridAuth" file="assets/images/{$NAME|lower}.png"}" alt="{$NAME}"></a>
-    {/if}
     {/loop}
     <span>{intl l="or" d="theliahybridauth.fo.default"}</span>
   </div>

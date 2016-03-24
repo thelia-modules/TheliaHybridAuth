@@ -55,6 +55,7 @@ class FrontHook extends BaseHook
     {
         $event->add(array(
             "type" => TemplateDefinition::FRONT_OFFICE,
+            "id" => 'socials',
             "code" => 'account.additional',
             "title" => Translator::getInstance()->trans(
                 'social networks associated',

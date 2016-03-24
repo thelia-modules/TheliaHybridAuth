@@ -36,9 +36,6 @@ use TheliaHybridAuth\TheliaHybridAuth;
  */
 class HybridAuthCustomerController extends CustomerController
 {
-    /**
-     * Display the register template if no customer logged
-     */
     public function viewRegisterAction()
     {
         if ($this->getSecurityContext()->hasCustomerUser()) {
@@ -46,55 +43,73 @@ class HybridAuthCustomerController extends CustomerController
             return $this->generateRedirect(URL::getInstance()->getIndexPage());
         }
 
-        require_once(__DIR__ . '/../HybridAuth/Hybrid/Auth.php');
-        require_once(__DIR__.'/../HybridAuth/Hybrid/Endpoint.php');
+        try {
 
-        if (isset($_REQUEST['hauth_start']) || isset($_REQUEST['hauth_done'])) {
-            \Hybrid_Endpoint::process();
+            require_once(__DIR__ . '/../HybridAuth/Hybrid/Auth.php');
+            require_once(__DIR__.'/../HybridAuth/Hybrid/Endpoint.php');
+
+            if (isset($_REQUEST['hauth_start']) || isset($_REQUEST['hauth_done'])) {
+                \Hybrid_Endpoint::process();
+            }
+
+            $providerName = ucfirst($this->getRequest()->get('provider'));
+
+            if (null == TheliaHybridAuth::getConfigValue($providerName.'_enabled')) {
+                throw new \Exception('This provider is not activated.');
+            }
+
+            $config = TheliaHybridAuth::getConfigByProvider($providerName);
+
+            $hybridauth = new \Hybrid_Auth($config);
+
+            $provider = $hybridauth->authenticate(
+                $providerName,
+                array(URL::getInstance()->retrieveCurrent($this->getRequest()))
+            );
+
+            $user_profile = $provider->getUserProfile();
+
+            // set a random password for the user
+            $password = Password::generateRandom(8);
+
+            $this->getRequest()->getSession()->set("hybridauth_provider", $providerName);
+            $this->getRequest()->getSession()->set("hybridauth_token", $user_profile->identifier);
+
+            $form = $this->createForm("register.hybrid.auth", "form", array(
+                'title' => $this->getTitleFromGender($user_profile),
+                'firstname' => $user_profile->firstName,
+                'lastname' => $user_profile->lastName,
+                'email' => ($user_profile->emailVerified) ? $user_profile->emailVerified : $user_profile->email,
+                'email_confirm' => ($user_profile->emailVerified) ? $user_profile->emailVerified : $user_profile->email,
+                'cellphone' => $user_profile->phone,
+                'address' => $user_profile->address,
+                'zipcode' => $user_profile->zip,
+                'city' => $user_profile->city,
+                'password' => $password,
+                'password_confirm' => $password,
+                'provider' => $providerName
+            ));
+
+            $this->getParserContext()->addForm($form);
+
+            return $this->render("register-hybrid-auth");
+
+        } catch (\Exception $e) {
+            $message = $e->getMessage();
         }
 
-        $providerName = ucfirst($this->getRequest()->get('provider'));
+        $form = $this->createForm("register.hybrid.auth");
 
-        $config = TheliaHybridAuth::getConfigByProvider($providerName);
+        $form->setErrorMessage($message);
 
-        $hybridauth = new \Hybrid_Auth($config);
-
-        $provider = $hybridauth->authenticate(
-            $providerName,
-            array(URL::getInstance()->retrieveCurrent($this->getRequest()))
-        );
-
-        $user_profile = $provider->getUserProfile();
-
-        // set a random password for the user
-        $password = Password::generateRandom(8);
-
-        $this->getRequest()->getSession()->set("hybridauth_provider", $providerName);
-        $this->getRequest()->getSession()->set("hybridauth_token", $user_profile->identifier);
-
-        $form = $this->createForm("register.hybrid.auth", "form", array(
-            'title' => $this->getTitleFromGender($user_profile),
-            'firstname' => $user_profile->firstName,
-            'lastname' => $user_profile->lastName,
-            'email' => ($user_profile->emailVerified) ? $user_profile->emailVerified : $user_profile->email,
-            'email_confirm' => ($user_profile->emailVerified) ? $user_profile->emailVerified : $user_profile->email,
-            'cellphone' => $user_profile->phone,
-            'address' => $user_profile->address,
-            'zipcode' => $user_profile->zip,
-            'city' => $user_profile->city,
-            'password' => $password,
-            'password_confirm' => $password,
-            'provider' => $providerName
-        ));
-
-        $this->getParserContext()->addForm($form);
+        $this->getParserContext()->addForm($form)->setGeneralError($message);
 
         return $this->render("register-hybrid-auth");
     }
 
-    protected function getTitleFromGender($user_profile)
+    protected function getTitleFromGender($userProfile)
     {
-        switch ($user_profile->gender) {
+        switch ($userProfile->gender) {
             case 'male':
                 return 1;
                 break;
@@ -107,6 +122,51 @@ class HybridAuthCustomerController extends CustomerController
                 return null;
                 break;
         }
+    }
+
+    public function associationAction($providerName)
+    {
+        if (! $this->getSecurityContext()->hasCustomerUser()) {
+            return $this->generateRedirect(URL::getInstance()->getIndexPage());
+        }
+
+        try {
+
+            if (null == TheliaHybridAuth::getConfigValue($providerName.'_enabled')) {
+                throw new \Exception('This provider is not activated.');
+            }
+
+            require_once(__DIR__ . '/../HybridAuth/Hybrid/Auth.php');
+            require_once(__DIR__.'/../HybridAuth/Hybrid/Endpoint.php');
+
+            if (isset($_REQUEST['hauth_start']) || isset($_REQUEST['hauth_done'])) {
+                \Hybrid_Endpoint::process();
+            }
+
+            $config = TheliaHybridAuth::getConfigByProvider($providerName);
+
+            $hybridauth = new \Hybrid_Auth($config);
+
+            $provider = $hybridauth->authenticate(
+                $providerName,
+                array(URL::getInstance()->retrieveCurrent($this->getRequest()))
+            );
+
+            $identifier = $provider->getUserProfile()->identifier;
+
+            if (null !== $id = $this->getSession()->getCustomerUser()->getId()) {
+                $hybridauthEntry = new HybridAuth();
+                $hybridauthEntry->setCustomerId($id)->setToken($identifier)->setProvider($providerName);
+                $hybridauthEntry->save();
+            }
+
+            return $this->generateRedirectFromRoute('customer.home');
+
+        } catch (\Exception $e) {
+            $message = $e->getMessage();
+        }
+
+        return $this->render('account', array('error' => $message ));
     }
 
     public function removeAssociationAction($providerName)
@@ -222,6 +282,10 @@ class HybridAuthCustomerController extends CustomerController
             }
 
             $providerName = ucfirst($this->getRequest()->get('provider'));
+
+            if (null == TheliaHybridAuth::getConfigValue($providerName.'_enabled')) {
+                throw new \Exception('This provider is not activated.');
+            }
 
             $config = TheliaHybridAuth::getConfigByProvider($providerName);
 
