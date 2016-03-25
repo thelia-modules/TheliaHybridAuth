@@ -16,6 +16,7 @@ return array(
     'Edit a provider' => 'Edition d\'un fournisseur',
     'Edit action' => 'Editer',
     'Error, check your id and secret for %provider' => 'Erreur, vérifiez votre id et mot de passe pour %provider',
+    'Logo' => 'Logo',
     'Name' => 'Nom',
     'Providers list' => 'Liste des fournisseurs',
     'Test' => 'Tester',
