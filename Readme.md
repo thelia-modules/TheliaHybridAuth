@@ -37,12 +37,12 @@ A default list of providers is available :
 * Facebook
 * Twitter
 * Yahoo
-* Windows Live
 * LinkedIn
 * Foursquare
 
 But you can add any other provider that are in the following list :
 
+* Windows Live
 * GitHub
 * LastFM
 * Vimeo
@@ -77,12 +77,9 @@ But you can add any other provider that are in the following list :
 
 |Argument |Description |
 |---      |--- |
-|enabled | A boolean value. If set to true, return only activated providers, if set to false, return only non active providers, if set to *, return all providers
-__default__ : true
-example : _enabled="*"_ |
+|enabled | A boolean value. If set to true, return only activated providers, if set to false, return only non active providers, if set to \*, return all providers.  <br/><br/> __default__ : true  <br/><br/> example : *enabled="\*"* |
 |customer_id | An int value. Allows to get the providers associated with this customer id. |
-|exclude | A string containing all the providers you want to exclude from the loop.
-example : _exclude="Facebook,Twitter,AOL"_ |
+|exclude | A string containing all the providers you want to exclude from the loop.  <br/><br/> example : _exclude="Facebook,Twitter,AOL"_|
 
 ### Output arguments
 
