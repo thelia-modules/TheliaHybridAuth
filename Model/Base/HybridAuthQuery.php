@@ -40,6 +40,10 @@ use Thelia\Model\Customer;
  * @method     ChildHybridAuthQuery rightJoinCustomer($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Customer relation
  * @method     ChildHybridAuthQuery innerJoinCustomer($relationAlias = null) Adds a INNER JOIN clause to the query using the Customer relation
  *
+ * @method     ChildHybridAuthQuery leftJoinProviderConfig($relationAlias = null) Adds a LEFT JOIN clause to the query using the ProviderConfig relation
+ * @method     ChildHybridAuthQuery rightJoinProviderConfig($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ProviderConfig relation
+ * @method     ChildHybridAuthQuery innerJoinProviderConfig($relationAlias = null) Adds a INNER JOIN clause to the query using the ProviderConfig relation
+ *
  * @method     ChildHybridAuth findOne(ConnectionInterface $con = null) Return the first ChildHybridAuth matching the query
  * @method     ChildHybridAuth findOneOrCreate(ConnectionInterface $con = null) Return the first ChildHybridAuth matching the query, or a new ChildHybridAuth object populated from the query conditions when no match is found
  *
@@ -444,6 +448,81 @@ abstract class HybridAuthQuery extends ModelCriteria
         return $this
             ->joinCustomer($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'Customer', '\Thelia\Model\CustomerQuery');
+    }
+
+    /**
+     * Filter the query by a related \TheliaHybridAuth\Model\ProviderConfig object
+     *
+     * @param \TheliaHybridAuth\Model\ProviderConfig|ObjectCollection $providerConfig The related object(s) to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildHybridAuthQuery The current query, for fluid interface
+     */
+    public function filterByProviderConfig($providerConfig, $comparison = null)
+    {
+        if ($providerConfig instanceof \TheliaHybridAuth\Model\ProviderConfig) {
+            return $this
+                ->addUsingAlias(HybridAuthTableMap::PROVIDER, $providerConfig->getProvider(), $comparison);
+        } elseif ($providerConfig instanceof ObjectCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+
+            return $this
+                ->addUsingAlias(HybridAuthTableMap::PROVIDER, $providerConfig->toKeyValue('PrimaryKey', 'Provider'), $comparison);
+        } else {
+            throw new PropelException('filterByProviderConfig() only accepts arguments of type \TheliaHybridAuth\Model\ProviderConfig or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the ProviderConfig relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return ChildHybridAuthQuery The current query, for fluid interface
+     */
+    public function joinProviderConfig($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('ProviderConfig');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'ProviderConfig');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the ProviderConfig relation ProviderConfig object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   \TheliaHybridAuth\Model\ProviderConfigQuery A secondary query class using the current class as primary query
+     */
+    public function useProviderConfigQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinProviderConfig($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'ProviderConfig', '\TheliaHybridAuth\Model\ProviderConfigQuery');
     }
 
     /**

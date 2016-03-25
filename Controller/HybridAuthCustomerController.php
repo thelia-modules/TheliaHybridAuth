@@ -54,10 +54,6 @@ class HybridAuthCustomerController extends CustomerController
 
             $providerName = ucfirst($this->getRequest()->get('provider'));
 
-            if (null == TheliaHybridAuth::getConfigValue($providerName.'_enabled')) {
-                throw new \Exception('This provider is not activated.');
-            }
-
             $config = TheliaHybridAuth::getConfigByProvider($providerName);
 
             $hybridauth = new \Hybrid_Auth($config);
@@ -131,10 +127,6 @@ class HybridAuthCustomerController extends CustomerController
         }
 
         try {
-
-            if (null == TheliaHybridAuth::getConfigValue($providerName.'_enabled')) {
-                throw new \Exception('This provider is not activated.');
-            }
 
             require_once(__DIR__ . '/../HybridAuth/Hybrid/Auth.php');
             require_once(__DIR__.'/../HybridAuth/Hybrid/Endpoint.php');
@@ -282,10 +274,6 @@ class HybridAuthCustomerController extends CustomerController
             }
 
             $providerName = ucfirst($this->getRequest()->get('provider'));
-
-            if (null == TheliaHybridAuth::getConfigValue($providerName.'_enabled')) {
-                throw new \Exception('This provider is not activated.');
-            }
 
             $config = TheliaHybridAuth::getConfigByProvider($providerName);
 

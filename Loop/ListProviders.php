@@ -12,14 +12,15 @@
 
 namespace TheliaHybridAuth\Loop;
 
-use Thelia\Core\Template\Element\ArraySearchLoopInterface;
+use Propel\Runtime\ActiveQuery\Criteria;
 use Thelia\Core\Template\Element\BaseLoop;
 use Thelia\Core\Template\Element\LoopResult;
 use Thelia\Core\Template\Element\LoopResultRow;
+use Thelia\Core\Template\Element\PropelSearchLoopInterface;
 use Thelia\Core\Template\Loop\Argument\Argument;
 use Thelia\Core\Template\Loop\Argument\ArgumentCollection;
 use TheliaHybridAuth\Model\HybridAuthQuery;
-use TheliaHybridAuth\TheliaHybridAuth;
+use TheliaHybridAuth\Model\ProviderConfigQuery;
 use Thelia\Type;
 
 /**
@@ -27,7 +28,7 @@ use Thelia\Type;
  * @package TheliaHybridAuth\Loop
  * @author Tom Pradat <tpradat@openstudio.fr>
  */
-class ListProviders extends BaseLoop implements ArraySearchLoopInterface
+class ListProviders extends BaseLoop implements PropelSearchLoopInterface
 {
     public function getArgDefinitions()
     {
@@ -38,45 +39,26 @@ class ListProviders extends BaseLoop implements ArraySearchLoopInterface
         );
     }
 
-    public function buildArray()
+    public function buildModelCriteria()
     {
-        $array = array();
-        $providers = explode(',', TheliaHybridAuth::getConfigValue('provider_list'));
-        $providersExcluded = explode(',', $this->getExclude());
 
-        if (null !== $customerId = $this->getCustomerId()) {
-            $customerProviders = array();
-            $results = HybridAuthQuery::create()->filterByCustomerId($customerId)->find();
+        $query = ProviderConfigQuery::create();
 
-            foreach ($results as $result) {
-                $customerProviders[] = $result->getProvider();
+        if ($this->getEnabled() !== Type\BooleanOrBothType::ANY) {
+            $query->filterByEnabled($this->getEnabled());
+        }
+
+        if (null !== $this->getCustomerId()) {
+            $query->filterByHybridAuth(HybridAuthQuery::create()->filterByCustomerId($this->getCustomerId())->find());
+        }
+
+        if (null !== $providersExcluded = explode(',', $this->getExclude())) {
+            foreach ($providersExcluded as $provider) {
+                $query->filterByProvider($provider, Criteria::NOT_EQUAL);
             }
         }
 
-        foreach ($providers as $providerName) {
-            $enabled = (TheliaHybridAuth::getConfigValue($providerName.'_enabled') == null) ? false : true;
-            $provider = array();
-            $provider['name'] = $providerName;
-            $provider['enabled'] = $enabled;
-
-            if (!in_array($providerName, $providersExcluded)) {
-                if (isset($customerProviders) && in_array($providerName, $customerProviders)) {
-                    if ($this->getEnabled() === Type\BooleanOrBothType::ANY) {
-                        $array[] = $provider;
-                    } elseif ($enabled === $this->getEnabled()) {
-                        $array[] = $provider;
-                    }
-                } elseif (!isset($customerProviders)) {
-                    if ($this->getEnabled() === Type\BooleanOrBothType::ANY) {
-                        $array[] = $provider;
-                    } elseif ($enabled === $this->getEnabled()) {
-                        $array[] = $provider;
-                    }
-                }
-            }
-        }
-
-        return $array;
+        return $query;
     }
 
     public function parseResults(LoopResult $loopResult)
@@ -84,8 +66,8 @@ class ListProviders extends BaseLoop implements ArraySearchLoopInterface
         foreach ($loopResult->getResultDataCollection() as $provider) {
             $loopResultRow = new LoopResultRow($provider);
 
-            $loopResultRow->set('NAME', $provider['name'])
-                ->set('ENABLED', $provider['enabled']);
+            $loopResultRow->set('NAME', $provider->getProvider())
+                ->set('ENABLED', $provider->getEnabled());
 
             $loopResult->addRow($loopResultRow);
         }

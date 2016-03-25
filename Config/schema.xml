@@ -11,6 +11,19 @@
         <foreign-key foreignTable="customer" name="fk_customer_id" onDelete="CASCADE" onUpdate="RESTRICT">
             <reference foreign="id" local="customer_id" />
         </foreign-key>
+        <foreign-key foreignTable="provider_config" name="fk_provider" onDelete="CASCADE" onUpdate="RESTRICT">
+            <reference foreign="provider" local="provider" />
+        </foreign-key>
+    </table>
+    <table name="provider_config" namespace="TheliaHybridAuth\Model">
+        <column autoIncrement="true" name="id" primaryKey="true" required="true" type="INTEGER" />
+        <column name="provider" required="true" size="255" type="VARCHAR" />
+        <column name="key" size="255" type="VARCHAR" />
+        <column name="secret" size="255" type="VARCHAR" />
+        <column name="enabled" required="true" type="BOOLEAN"/>
+        <unique name="provider_unique">
+            <unique-column name="provider" />
+        </unique>
     </table>
     <external-schema filename="local/config/schema.xml" referenceOnly="true" />
 </database>

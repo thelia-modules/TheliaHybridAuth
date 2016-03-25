@@ -1,9 +1,11 @@
-<div class="row">
-  <div id="social-login" class="col-md-12">
-    <span>{intl l="Login with" d="theliahybridauth.fo.default"}</span>
-    {loop type="providers.list" name="providers-list"}
-      <a class="link-social-login" href="{url path="/login/hybridauth?provider={$NAME}"}"><img src="{image source="TheliaHybridAuth" file="assets/images/{$NAME|lower}.png"}" alt="{$NAME}"></a>
-    {/loop}
-    <span>{intl l="or" d="theliahybridauth.fo.default"}</span>
-  </div>
-</div>
+{ifloop rel="providers-list"}
+    <div class="row">
+        <div id="social-login" class="col-md-12">
+            <span>{intl l="Login with" d="theliahybridauth.fo.default"}</span>
+            {loop type="providers.list" name="providers-list"}
+                <a class="link-social-login" href="{url path="/login/hybridauth?provider={$NAME}"}"><img src="{image source="TheliaHybridAuth" file="assets/images/{$NAME|lower}.png" failsafe="1"}" alt="{$NAME}"></a>
+            {/loop}
+            <span>{intl l="or" d="theliahybridauth.fo.default"}</span>
+        </div>
+    </div>
+{/ifloop}

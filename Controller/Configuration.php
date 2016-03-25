@@ -18,6 +18,8 @@ use Thelia\Core\Security\Resource\AdminResources;
 use Thelia\Core\Translation\Translator;
 use Thelia\Log\Tlog;
 use Thelia\Tools\URL;
+use TheliaHybridAuth\Model\ProviderConfig;
+use TheliaHybridAuth\Model\ProviderConfigQuery;
 use TheliaHybridAuth\TheliaHybridAuth;
 
 /**
@@ -33,7 +35,7 @@ class Configuration extends BaseAdminController
             return $response;
         }
         //check provider existence
-        if (!in_array($providerName, explode(',', TheliaHybridAuth::getConfigValue('provider_list')))) {
+        if (null === $providerConfig = ProviderConfigQuery::create()->filterByProvider($providerName)->findOne()) {
             throw new \Exception(Translator::getInstance()->trans(
                 "Provider not found",
                 array(),
@@ -41,8 +43,8 @@ class Configuration extends BaseAdminController
             ));
         }
 
-        $providerId = TheliaHybridAuth::getConfigValue($providerName.'_id');
-        $providerSecret = TheliaHybridAuth::getConfigValue($providerName.'_secret');
+        $providerId = $providerConfig->getKey();
+        $providerSecret = $providerConfig->getSecret();
 
         $form = $this->createForm('update.provider', 'form', array(
             'id' => $providerId,
@@ -115,9 +117,8 @@ class Configuration extends BaseAdminController
             $providerName = $form->get('name')->getData();
             $providerId = $form->get('id')->getData();
             $providerSecret = $form->get('secret')->getData();
-            $providerList = explode(',', TheliaHybridAuth::getConfigValue('provider_list'));
 
-            if (in_array($providerName, $providerList)) {
+            if (null !== ProviderConfigQuery::create()->filterByProvider($providerName)->findOne()) {
                 throw new \Exception(Translator::getInstance()->trans(
                     'This provider already exists, use the "edit" button to update it',
                     array(),
@@ -125,13 +126,13 @@ class Configuration extends BaseAdminController
                 ));
             }
 
-            TheliaHybridAuth::setConfigValue(
-                'provider_list',
-                TheliaHybridAuth::getConfigValue('provider_list').','.$providerName
-            );
-
-            TheliaHybridAuth::setConfigValue($providerName.'_id', $providerId);
-            TheliaHybridAuth::setConfigValue($providerName.'_secret', $providerSecret);
+            (new ProviderConfig())
+                ->setProvider($providerName)
+                ->setEnabled(false)
+                ->setKey($providerId)
+                ->setSecret($providerSecret)
+                ->save()
+            ;
 
             return $this->generateSuccessRedirect($formProvider);
 
@@ -175,8 +176,13 @@ class Configuration extends BaseAdminController
 
             $form = $this->validateForm($formProvider, 'POST');
 
-            TheliaHybridAuth::setConfigValue($providerName.'_id', $form->get('id')->getData());
-            TheliaHybridAuth::setConfigValue($providerName.'_secret', $form->get('secret')->getData());
+            $providerConfig = ProviderConfigQuery::create()->filterByProvider($providerName)->findOne();
+
+            $providerConfig
+                ->setKey($form->get('id')->getData())
+                ->setSecret($form->get('secret')->getData())
+                ->save()
+            ;
 
             return $this->viewAction($providerName);
 
@@ -221,9 +227,7 @@ class Configuration extends BaseAdminController
 
             $this->validateForm($formProvider, 'POST');
 
-            $providers = explode(',', TheliaHybridAuth::getConfigValue('provider_list'));
-
-            if (!in_array($providerName, $providers)) {
+            if (null === $providerConfig = ProviderConfigQuery::create()->filterByProvider($providerName)->findOne()) {
 
                 throw new \Exception(Translator::getInstance()->trans(
                     'The provider %name doesn\'t exist',
@@ -234,15 +238,8 @@ class Configuration extends BaseAdminController
                 ));
 
             } else {
-                $newProviders = array();
 
-                foreach ($providers as $provider) {
-                    if ($provider != $providerName) {
-                        $newProviders[] = $provider;
-                    }
-                }
-
-                TheliaHybridAuth::setConfigValue('provider_list', implode(',', $newProviders));
+                $providerConfig->delete();
             }
 
             return $this->generateSuccessRedirect($formProvider);
@@ -274,8 +271,9 @@ class Configuration extends BaseAdminController
         $message = null;
         try {
 
-            if (!TheliaHybridAuth::getConfigValue($providerName.'_id')
-                || !TheliaHybridAuth::getConfigValue($providerName.'_secret')) {
+            $providerConfig = ProviderConfigQuery::create()->filterByProvider($providerName)->findOne();
+
+            if (!$providerConfig->getId() || !$providerConfig->getSecret()) {
                 throw new \Exception(Translator::getInstance()->trans(
                     'You need to provide an id and secret for this provider',
                     array(),
@@ -283,10 +281,10 @@ class Configuration extends BaseAdminController
                 ));
             }
 
-            TheliaHybridAuth::setConfigValue(
-                $providerName.'_enabled',
-                (TheliaHybridAuth::getConfigValue($providerName.'_enabled') == false) ? true : false
-            );
+            $providerConfig
+                ->setEnabled(($providerConfig->getEnabled()) ? false : true)
+                ->save()
+            ;
 
         } catch (\Exception $e) {
             $message = $e->getMessage();

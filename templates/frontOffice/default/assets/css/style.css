@@ -7,5 +7,6 @@
     font-weight: 600;
 }
 .link-social-login{
-    padding: 0 5px;
+    display: inline-block;
+    margin: 5px;
 }

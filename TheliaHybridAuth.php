@@ -15,6 +15,8 @@ namespace TheliaHybridAuth;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Thelia\Install\Database;
 use Thelia\Module\BaseModule;
+use TheliaHybridAuth\Model\ProviderConfig;
+use TheliaHybridAuth\Model\ProviderConfigQuery;
 
 class TheliaHybridAuth extends BaseModule
 {
@@ -36,23 +38,30 @@ class TheliaHybridAuth extends BaseModule
 
     public function postActivation(ConnectionInterface $con = null)
     {
-        $this->setConfigValue(
-            'provider_list',
-            'Facebook,Google,Twitter,Yahoo,OpenID,LinkedIn,Foursquare'
-        );
+        (new ProviderConfig())->setProvider('Facebook')->setEnabled(false)->save();
+        (new ProviderConfig())->setProvider('Google')->setEnabled(false)->save();
+        (new ProviderConfig())->setProvider('Twitter')->setEnabled(false)->save();
+        (new ProviderConfig())->setProvider('Yahoo')->setEnabled(false)->save();
+        (new ProviderConfig())->setProvider('OpenID')->setEnabled(false)->save();
+        (new ProviderConfig())->setProvider('LinkedIn')->setEnabled(false)->save();
+        (new ProviderConfig())->setProvider('Foursquare')->setEnabled(false)->save();
+
+        $this->setConfigValue('is_initialized', true);
     }
 
     public static function getConfigByProvider($providerName)
     {
+        $providerConfig = ProviderConfigQuery::create()->filterByProvider($providerName)->findOne();
+
         return array(
             "base_url" => "",
             "providers" => array(
                 $providerName => array(
                     "enabled" => true,
                     "keys" => array(
-                        "id" => TheliaHybridAuth::getConfigValue($providerName.'_id'),
-                        "key" => TheliaHybridAuth::getConfigValue($providerName.'_id'),
-                        "secret" => TheliaHybridAuth::getConfigValue($providerName.'_secret')
+                        "id" => $providerConfig->getKey(),
+                        "key" => $providerConfig->getKey(),
+                        "secret" => $providerConfig->getSecret()
                     )
                 )
             ),

@@ -27,6 +27,9 @@
                         <thead>
                         <tr>
                             <th>
+                                {intl l="Logo" d="theliahybridauth.bo.default"}
+                            </th>
+                            <th>
                                 {intl l='Name' d="theliahybridauth.bo.default"}
                             </th>
                             <th>
@@ -40,6 +43,9 @@
                         <tbody>
                         {loop type="providers.list" name="providers-list" enabled="*"}
                             <tr>
+                                <td>
+                                    <img src="{image source="TheliaHybridAuth" file="assets/images/{$NAME|lower}.png" failsafe="1"}" alt="{$NAME}">
+                                </td>
                                 <td>
                                     {$NAME}
                                 </td>

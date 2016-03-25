@@ -9,24 +9,24 @@ use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Collection;
+use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
+use TheliaHybridAuth\Model\HybridAuth as ChildHybridAuth;
 use TheliaHybridAuth\Model\HybridAuthQuery as ChildHybridAuthQuery;
 use TheliaHybridAuth\Model\ProviderConfig as ChildProviderConfig;
 use TheliaHybridAuth\Model\ProviderConfigQuery as ChildProviderConfigQuery;
-use TheliaHybridAuth\Model\Map\HybridAuthTableMap;
-use Thelia\Model\Customer as ChildCustomer;
-use Thelia\Model\CustomerQuery;
+use TheliaHybridAuth\Model\Map\ProviderConfigTableMap;
 
-abstract class HybridAuth implements ActiveRecordInterface
+abstract class ProviderConfig implements ActiveRecordInterface
 {
     /**
      * TableMap class name
      */
-    const TABLE_MAP = '\\TheliaHybridAuth\\Model\\Map\\HybridAuthTableMap';
+    const TABLE_MAP = '\\TheliaHybridAuth\\Model\\Map\\ProviderConfigTableMap';
 
 
     /**
@@ -68,26 +68,28 @@ abstract class HybridAuth implements ActiveRecordInterface
     protected $provider;
 
     /**
-     * The value for the token field.
+     * The value for the key field.
      * @var        string
      */
-    protected $token;
+    protected $key;
 
     /**
-     * The value for the customer_id field.
-     * @var        int
+     * The value for the secret field.
+     * @var        string
      */
-    protected $customer_id;
+    protected $secret;
 
     /**
-     * @var        Customer
+     * The value for the enabled field.
+     * @var        boolean
      */
-    protected $aCustomer;
+    protected $enabled;
 
     /**
-     * @var        ProviderConfig
+     * @var        ObjectCollection|ChildHybridAuth[] Collection to store aggregation of ChildHybridAuth objects.
      */
-    protected $aProviderConfig;
+    protected $collHybridAuths;
+    protected $collHybridAuthsPartial;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -98,7 +100,13 @@ abstract class HybridAuth implements ActiveRecordInterface
     protected $alreadyInSave = false;
 
     /**
-     * Initializes internal state of TheliaHybridAuth\Model\Base\HybridAuth object.
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection
+     */
+    protected $hybridAuthsScheduledForDeletion = null;
+
+    /**
+     * Initializes internal state of TheliaHybridAuth\Model\Base\ProviderConfig object.
      */
     public function __construct()
     {
@@ -193,9 +201,9 @@ abstract class HybridAuth implements ActiveRecordInterface
     }
 
     /**
-     * Compares this with another <code>HybridAuth</code> instance.  If
-     * <code>obj</code> is an instance of <code>HybridAuth</code>, delegates to
-     * <code>equals(HybridAuth)</code>.  Otherwise, returns <code>false</code>.
+     * Compares this with another <code>ProviderConfig</code> instance.  If
+     * <code>obj</code> is an instance of <code>ProviderConfig</code>, delegates to
+     * <code>equals(ProviderConfig)</code>.  Otherwise, returns <code>false</code>.
      *
      * @param  mixed   $obj The object to compare to.
      * @return boolean Whether equal to the object specified.
@@ -278,7 +286,7 @@ abstract class HybridAuth implements ActiveRecordInterface
      * @param string $name  The virtual column name
      * @param mixed  $value The value to give to the virtual column
      *
-     * @return HybridAuth The current object, for fluid interface
+     * @return ProviderConfig The current object, for fluid interface
      */
     public function setVirtualColumn($name, $value)
     {
@@ -310,7 +318,7 @@ abstract class HybridAuth implements ActiveRecordInterface
      *                       or a format name ('XML', 'YAML', 'JSON', 'CSV')
      * @param string $data The source data to import from
      *
-     * @return HybridAuth The current object, for fluid interface
+     * @return ProviderConfig The current object, for fluid interface
      */
     public function importFrom($parser, $data)
     {
@@ -378,32 +386,43 @@ abstract class HybridAuth implements ActiveRecordInterface
     }
 
     /**
-     * Get the [token] column value.
+     * Get the [key] column value.
      *
      * @return   string
      */
-    public function getToken()
+    public function getKey()
     {
 
-        return $this->token;
+        return $this->key;
     }
 
     /**
-     * Get the [customer_id] column value.
+     * Get the [secret] column value.
      *
-     * @return   int
+     * @return   string
      */
-    public function getCustomerId()
+    public function getSecret()
     {
 
-        return $this->customer_id;
+        return $this->secret;
+    }
+
+    /**
+     * Get the [enabled] column value.
+     *
+     * @return   boolean
+     */
+    public function getEnabled()
+    {
+
+        return $this->enabled;
     }
 
     /**
      * Set the value of [id] column.
      *
      * @param      int $v new value
-     * @return   \TheliaHybridAuth\Model\HybridAuth The current object (for fluent API support)
+     * @return   \TheliaHybridAuth\Model\ProviderConfig The current object (for fluent API support)
      */
     public function setId($v)
     {
@@ -413,7 +432,7 @@ abstract class HybridAuth implements ActiveRecordInterface
 
         if ($this->id !== $v) {
             $this->id = $v;
-            $this->modifiedColumns[HybridAuthTableMap::ID] = true;
+            $this->modifiedColumns[ProviderConfigTableMap::ID] = true;
         }
 
 
@@ -424,7 +443,7 @@ abstract class HybridAuth implements ActiveRecordInterface
      * Set the value of [provider] column.
      *
      * @param      string $v new value
-     * @return   \TheliaHybridAuth\Model\HybridAuth The current object (for fluent API support)
+     * @return   \TheliaHybridAuth\Model\ProviderConfig The current object (for fluent API support)
      */
     public function setProvider($v)
     {
@@ -434,11 +453,7 @@ abstract class HybridAuth implements ActiveRecordInterface
 
         if ($this->provider !== $v) {
             $this->provider = $v;
-            $this->modifiedColumns[HybridAuthTableMap::PROVIDER] = true;
-        }
-
-        if ($this->aProviderConfig !== null && $this->aProviderConfig->getProvider() !== $v) {
-            $this->aProviderConfig = null;
+            $this->modifiedColumns[ProviderConfigTableMap::PROVIDER] = true;
         }
 
 
@@ -446,50 +461,75 @@ abstract class HybridAuth implements ActiveRecordInterface
     } // setProvider()
 
     /**
-     * Set the value of [token] column.
+     * Set the value of [key] column.
      *
      * @param      string $v new value
-     * @return   \TheliaHybridAuth\Model\HybridAuth The current object (for fluent API support)
+     * @return   \TheliaHybridAuth\Model\ProviderConfig The current object (for fluent API support)
      */
-    public function setToken($v)
+    public function setKey($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->token !== $v) {
-            $this->token = $v;
-            $this->modifiedColumns[HybridAuthTableMap::TOKEN] = true;
+        if ($this->key !== $v) {
+            $this->key = $v;
+            $this->modifiedColumns[ProviderConfigTableMap::KEY] = true;
         }
 
 
         return $this;
-    } // setToken()
+    } // setKey()
 
     /**
-     * Set the value of [customer_id] column.
+     * Set the value of [secret] column.
      *
-     * @param      int $v new value
-     * @return   \TheliaHybridAuth\Model\HybridAuth The current object (for fluent API support)
+     * @param      string $v new value
+     * @return   \TheliaHybridAuth\Model\ProviderConfig The current object (for fluent API support)
      */
-    public function setCustomerId($v)
+    public function setSecret($v)
     {
         if ($v !== null) {
-            $v = (int) $v;
+            $v = (string) $v;
         }
 
-        if ($this->customer_id !== $v) {
-            $this->customer_id = $v;
-            $this->modifiedColumns[HybridAuthTableMap::CUSTOMER_ID] = true;
-        }
-
-        if ($this->aCustomer !== null && $this->aCustomer->getId() !== $v) {
-            $this->aCustomer = null;
+        if ($this->secret !== $v) {
+            $this->secret = $v;
+            $this->modifiedColumns[ProviderConfigTableMap::SECRET] = true;
         }
 
 
         return $this;
-    } // setCustomerId()
+    } // setSecret()
+
+    /**
+     * Sets the value of the [enabled] column.
+     * Non-boolean arguments are converted using the following rules:
+     *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     *
+     * @param      boolean|integer|string $v The new value
+     * @return   \TheliaHybridAuth\Model\ProviderConfig The current object (for fluent API support)
+     */
+    public function setEnabled($v)
+    {
+        if ($v !== null) {
+            if (is_string($v)) {
+                $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+            } else {
+                $v = (boolean) $v;
+            }
+        }
+
+        if ($this->enabled !== $v) {
+            $this->enabled = $v;
+            $this->modifiedColumns[ProviderConfigTableMap::ENABLED] = true;
+        }
+
+
+        return $this;
+    } // setEnabled()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -528,17 +568,20 @@ abstract class HybridAuth implements ActiveRecordInterface
         try {
 
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : HybridAuthTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : ProviderConfigTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
             $this->id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : HybridAuthTableMap::translateFieldName('Provider', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : ProviderConfigTableMap::translateFieldName('Provider', TableMap::TYPE_PHPNAME, $indexType)];
             $this->provider = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : HybridAuthTableMap::translateFieldName('Token', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->token = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ProviderConfigTableMap::translateFieldName('Key', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->key = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : HybridAuthTableMap::translateFieldName('CustomerId', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->customer_id = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ProviderConfigTableMap::translateFieldName('Secret', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->secret = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ProviderConfigTableMap::translateFieldName('Enabled', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->enabled = (null !== $col) ? (boolean) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -547,10 +590,10 @@ abstract class HybridAuth implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 4; // 4 = HybridAuthTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 5; // 5 = ProviderConfigTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException("Error populating \TheliaHybridAuth\Model\HybridAuth object", 0, $e);
+            throw new PropelException("Error populating \TheliaHybridAuth\Model\ProviderConfig object", 0, $e);
         }
     }
 
@@ -569,12 +612,6 @@ abstract class HybridAuth implements ActiveRecordInterface
      */
     public function ensureConsistency()
     {
-        if ($this->aProviderConfig !== null && $this->provider !== $this->aProviderConfig->getProvider()) {
-            $this->aProviderConfig = null;
-        }
-        if ($this->aCustomer !== null && $this->customer_id !== $this->aCustomer->getId()) {
-            $this->aCustomer = null;
-        }
     } // ensureConsistency
 
     /**
@@ -598,13 +635,13 @@ abstract class HybridAuth implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection(HybridAuthTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getReadConnection(ProviderConfigTableMap::DATABASE_NAME);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        $dataFetcher = ChildHybridAuthQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
+        $dataFetcher = ChildProviderConfigQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
         $row = $dataFetcher->fetch();
         $dataFetcher->close();
         if (!$row) {
@@ -614,8 +651,8 @@ abstract class HybridAuth implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aCustomer = null;
-            $this->aProviderConfig = null;
+            $this->collHybridAuths = null;
+
         } // if (deep)
     }
 
@@ -625,8 +662,8 @@ abstract class HybridAuth implements ActiveRecordInterface
      * @param      ConnectionInterface $con
      * @return void
      * @throws PropelException
-     * @see HybridAuth::setDeleted()
-     * @see HybridAuth::isDeleted()
+     * @see ProviderConfig::setDeleted()
+     * @see ProviderConfig::isDeleted()
      */
     public function delete(ConnectionInterface $con = null)
     {
@@ -635,12 +672,12 @@ abstract class HybridAuth implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(HybridAuthTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(ProviderConfigTableMap::DATABASE_NAME);
         }
 
         $con->beginTransaction();
         try {
-            $deleteQuery = ChildHybridAuthQuery::create()
+            $deleteQuery = ChildProviderConfigQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
@@ -677,7 +714,7 @@ abstract class HybridAuth implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(HybridAuthTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(ProviderConfigTableMap::DATABASE_NAME);
         }
 
         $con->beginTransaction();
@@ -697,7 +734,7 @@ abstract class HybridAuth implements ActiveRecordInterface
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                HybridAuthTableMap::addInstanceToPool($this);
+                ProviderConfigTableMap::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
             }
@@ -727,25 +764,6 @@ abstract class HybridAuth implements ActiveRecordInterface
         if (!$this->alreadyInSave) {
             $this->alreadyInSave = true;
 
-            // We call the save method on the following object(s) if they
-            // were passed to this object by their corresponding set
-            // method.  This object relates to these object(s) by a
-            // foreign key reference.
-
-            if ($this->aCustomer !== null) {
-                if ($this->aCustomer->isModified() || $this->aCustomer->isNew()) {
-                    $affectedRows += $this->aCustomer->save($con);
-                }
-                $this->setCustomer($this->aCustomer);
-            }
-
-            if ($this->aProviderConfig !== null) {
-                if ($this->aProviderConfig->isModified() || $this->aProviderConfig->isNew()) {
-                    $affectedRows += $this->aProviderConfig->save($con);
-                }
-                $this->setProviderConfig($this->aProviderConfig);
-            }
-
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
                 if ($this->isNew()) {
@@ -755,6 +773,23 @@ abstract class HybridAuth implements ActiveRecordInterface
                 }
                 $affectedRows += 1;
                 $this->resetModified();
+            }
+
+            if ($this->hybridAuthsScheduledForDeletion !== null) {
+                if (!$this->hybridAuthsScheduledForDeletion->isEmpty()) {
+                    \TheliaHybridAuth\Model\HybridAuthQuery::create()
+                        ->filterByPrimaryKeys($this->hybridAuthsScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->hybridAuthsScheduledForDeletion = null;
+                }
+            }
+
+                if ($this->collHybridAuths !== null) {
+            foreach ($this->collHybridAuths as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
             }
 
             $this->alreadyInSave = false;
@@ -777,27 +812,30 @@ abstract class HybridAuth implements ActiveRecordInterface
         $modifiedColumns = array();
         $index = 0;
 
-        $this->modifiedColumns[HybridAuthTableMap::ID] = true;
+        $this->modifiedColumns[ProviderConfigTableMap::ID] = true;
         if (null !== $this->id) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key (' . HybridAuthTableMap::ID . ')');
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . ProviderConfigTableMap::ID . ')');
         }
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(HybridAuthTableMap::ID)) {
+        if ($this->isColumnModified(ProviderConfigTableMap::ID)) {
             $modifiedColumns[':p' . $index++]  = 'ID';
         }
-        if ($this->isColumnModified(HybridAuthTableMap::PROVIDER)) {
+        if ($this->isColumnModified(ProviderConfigTableMap::PROVIDER)) {
             $modifiedColumns[':p' . $index++]  = 'PROVIDER';
         }
-        if ($this->isColumnModified(HybridAuthTableMap::TOKEN)) {
-            $modifiedColumns[':p' . $index++]  = 'TOKEN';
+        if ($this->isColumnModified(ProviderConfigTableMap::KEY)) {
+            $modifiedColumns[':p' . $index++]  = 'KEY';
         }
-        if ($this->isColumnModified(HybridAuthTableMap::CUSTOMER_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'CUSTOMER_ID';
+        if ($this->isColumnModified(ProviderConfigTableMap::SECRET)) {
+            $modifiedColumns[':p' . $index++]  = 'SECRET';
+        }
+        if ($this->isColumnModified(ProviderConfigTableMap::ENABLED)) {
+            $modifiedColumns[':p' . $index++]  = 'ENABLED';
         }
 
         $sql = sprintf(
-            'INSERT INTO hybrid_auth (%s) VALUES (%s)',
+            'INSERT INTO provider_config (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -812,11 +850,14 @@ abstract class HybridAuth implements ActiveRecordInterface
                     case 'PROVIDER':
                         $stmt->bindValue($identifier, $this->provider, PDO::PARAM_STR);
                         break;
-                    case 'TOKEN':
-                        $stmt->bindValue($identifier, $this->token, PDO::PARAM_STR);
+                    case 'KEY':
+                        $stmt->bindValue($identifier, $this->key, PDO::PARAM_STR);
                         break;
-                    case 'CUSTOMER_ID':
-                        $stmt->bindValue($identifier, $this->customer_id, PDO::PARAM_INT);
+                    case 'SECRET':
+                        $stmt->bindValue($identifier, $this->secret, PDO::PARAM_STR);
+                        break;
+                    case 'ENABLED':
+                        $stmt->bindValue($identifier, (int) $this->enabled, PDO::PARAM_INT);
                         break;
                 }
             }
@@ -864,7 +905,7 @@ abstract class HybridAuth implements ActiveRecordInterface
      */
     public function getByName($name, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = HybridAuthTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = ProviderConfigTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
         $field = $this->getByPosition($pos);
 
         return $field;
@@ -887,10 +928,13 @@ abstract class HybridAuth implements ActiveRecordInterface
                 return $this->getProvider();
                 break;
             case 2:
-                return $this->getToken();
+                return $this->getKey();
                 break;
             case 3:
-                return $this->getCustomerId();
+                return $this->getSecret();
+                break;
+            case 4:
+                return $this->getEnabled();
                 break;
             default:
                 return null;
@@ -915,16 +959,17 @@ abstract class HybridAuth implements ActiveRecordInterface
      */
     public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
-        if (isset($alreadyDumpedObjects['HybridAuth'][$this->getPrimaryKey()])) {
+        if (isset($alreadyDumpedObjects['ProviderConfig'][$this->getPrimaryKey()])) {
             return '*RECURSION*';
         }
-        $alreadyDumpedObjects['HybridAuth'][$this->getPrimaryKey()] = true;
-        $keys = HybridAuthTableMap::getFieldNames($keyType);
+        $alreadyDumpedObjects['ProviderConfig'][$this->getPrimaryKey()] = true;
+        $keys = ProviderConfigTableMap::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getId(),
             $keys[1] => $this->getProvider(),
-            $keys[2] => $this->getToken(),
-            $keys[3] => $this->getCustomerId(),
+            $keys[2] => $this->getKey(),
+            $keys[3] => $this->getSecret(),
+            $keys[4] => $this->getEnabled(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -932,11 +977,8 @@ abstract class HybridAuth implements ActiveRecordInterface
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->aCustomer) {
-                $result['Customer'] = $this->aCustomer->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
-            if (null !== $this->aProviderConfig) {
-                $result['ProviderConfig'] = $this->aProviderConfig->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            if (null !== $this->collHybridAuths) {
+                $result['HybridAuths'] = $this->collHybridAuths->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -956,7 +998,7 @@ abstract class HybridAuth implements ActiveRecordInterface
      */
     public function setByName($name, $value, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = HybridAuthTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = ProviderConfigTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
 
         return $this->setByPosition($pos, $value);
     }
@@ -979,10 +1021,13 @@ abstract class HybridAuth implements ActiveRecordInterface
                 $this->setProvider($value);
                 break;
             case 2:
-                $this->setToken($value);
+                $this->setKey($value);
                 break;
             case 3:
-                $this->setCustomerId($value);
+                $this->setSecret($value);
+                break;
+            case 4:
+                $this->setEnabled($value);
                 break;
         } // switch()
     }
@@ -1006,12 +1051,13 @@ abstract class HybridAuth implements ActiveRecordInterface
      */
     public function fromArray($arr, $keyType = TableMap::TYPE_PHPNAME)
     {
-        $keys = HybridAuthTableMap::getFieldNames($keyType);
+        $keys = ProviderConfigTableMap::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) $this->setId($arr[$keys[0]]);
         if (array_key_exists($keys[1], $arr)) $this->setProvider($arr[$keys[1]]);
-        if (array_key_exists($keys[2], $arr)) $this->setToken($arr[$keys[2]]);
-        if (array_key_exists($keys[3], $arr)) $this->setCustomerId($arr[$keys[3]]);
+        if (array_key_exists($keys[2], $arr)) $this->setKey($arr[$keys[2]]);
+        if (array_key_exists($keys[3], $arr)) $this->setSecret($arr[$keys[3]]);
+        if (array_key_exists($keys[4], $arr)) $this->setEnabled($arr[$keys[4]]);
     }
 
     /**
@@ -1021,12 +1067,13 @@ abstract class HybridAuth implements ActiveRecordInterface
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(HybridAuthTableMap::DATABASE_NAME);
+        $criteria = new Criteria(ProviderConfigTableMap::DATABASE_NAME);
 
-        if ($this->isColumnModified(HybridAuthTableMap::ID)) $criteria->add(HybridAuthTableMap::ID, $this->id);
-        if ($this->isColumnModified(HybridAuthTableMap::PROVIDER)) $criteria->add(HybridAuthTableMap::PROVIDER, $this->provider);
-        if ($this->isColumnModified(HybridAuthTableMap::TOKEN)) $criteria->add(HybridAuthTableMap::TOKEN, $this->token);
-        if ($this->isColumnModified(HybridAuthTableMap::CUSTOMER_ID)) $criteria->add(HybridAuthTableMap::CUSTOMER_ID, $this->customer_id);
+        if ($this->isColumnModified(ProviderConfigTableMap::ID)) $criteria->add(ProviderConfigTableMap::ID, $this->id);
+        if ($this->isColumnModified(ProviderConfigTableMap::PROVIDER)) $criteria->add(ProviderConfigTableMap::PROVIDER, $this->provider);
+        if ($this->isColumnModified(ProviderConfigTableMap::KEY)) $criteria->add(ProviderConfigTableMap::KEY, $this->key);
+        if ($this->isColumnModified(ProviderConfigTableMap::SECRET)) $criteria->add(ProviderConfigTableMap::SECRET, $this->secret);
+        if ($this->isColumnModified(ProviderConfigTableMap::ENABLED)) $criteria->add(ProviderConfigTableMap::ENABLED, $this->enabled);
 
         return $criteria;
     }
@@ -1041,8 +1088,8 @@ abstract class HybridAuth implements ActiveRecordInterface
      */
     public function buildPkeyCriteria()
     {
-        $criteria = new Criteria(HybridAuthTableMap::DATABASE_NAME);
-        $criteria->add(HybridAuthTableMap::ID, $this->id);
+        $criteria = new Criteria(ProviderConfigTableMap::DATABASE_NAME);
+        $criteria->add(ProviderConfigTableMap::ID, $this->id);
 
         return $criteria;
     }
@@ -1083,7 +1130,7 @@ abstract class HybridAuth implements ActiveRecordInterface
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object $copyObj An object of \TheliaHybridAuth\Model\HybridAuth (or compatible) type.
+     * @param      object $copyObj An object of \TheliaHybridAuth\Model\ProviderConfig (or compatible) type.
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
@@ -1091,8 +1138,23 @@ abstract class HybridAuth implements ActiveRecordInterface
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
         $copyObj->setProvider($this->getProvider());
-        $copyObj->setToken($this->getToken());
-        $copyObj->setCustomerId($this->getCustomerId());
+        $copyObj->setKey($this->getKey());
+        $copyObj->setSecret($this->getSecret());
+        $copyObj->setEnabled($this->getEnabled());
+
+        if ($deepCopy) {
+            // important: temporarily setNew(false) because this affects the behavior of
+            // the getter/setter methods for fkey referrer objects.
+            $copyObj->setNew(false);
+
+            foreach ($this->getHybridAuths() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addHybridAuth($relObj->copy($deepCopy));
+                }
+            }
+
+        } // if ($deepCopy)
+
         if ($makeNew) {
             $copyObj->setNew(true);
             $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
@@ -1108,7 +1170,7 @@ abstract class HybridAuth implements ActiveRecordInterface
      * objects.
      *
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return                 \TheliaHybridAuth\Model\HybridAuth Clone of current object.
+     * @return                 \TheliaHybridAuth\Model\ProviderConfig Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -1121,108 +1183,263 @@ abstract class HybridAuth implements ActiveRecordInterface
         return $copyObj;
     }
 
+
     /**
-     * Declares an association between this object and a ChildCustomer object.
+     * Initializes a collection based on the name of a relation.
+     * Avoids crafting an 'init[$relationName]s' method name
+     * that wouldn't work when StandardEnglishPluralizer is used.
      *
-     * @param                  ChildCustomer $v
-     * @return                 \TheliaHybridAuth\Model\HybridAuth The current object (for fluent API support)
+     * @param      string $relationName The name of the relation to initialize
+     * @return void
+     */
+    public function initRelation($relationName)
+    {
+        if ('HybridAuth' == $relationName) {
+            return $this->initHybridAuths();
+        }
+    }
+
+    /**
+     * Clears out the collHybridAuths collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addHybridAuths()
+     */
+    public function clearHybridAuths()
+    {
+        $this->collHybridAuths = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collHybridAuths collection loaded partially.
+     */
+    public function resetPartialHybridAuths($v = true)
+    {
+        $this->collHybridAuthsPartial = $v;
+    }
+
+    /**
+     * Initializes the collHybridAuths collection.
+     *
+     * By default this just sets the collHybridAuths collection to an empty array (like clearcollHybridAuths());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initHybridAuths($overrideExisting = true)
+    {
+        if (null !== $this->collHybridAuths && !$overrideExisting) {
+            return;
+        }
+        $this->collHybridAuths = new ObjectCollection();
+        $this->collHybridAuths->setModel('\TheliaHybridAuth\Model\HybridAuth');
+    }
+
+    /**
+     * Gets an array of ChildHybridAuth objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildProviderConfig is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return Collection|ChildHybridAuth[] List of ChildHybridAuth objects
      * @throws PropelException
      */
-    public function setCustomer(ChildCustomer $v = null)
+    public function getHybridAuths($criteria = null, ConnectionInterface $con = null)
     {
-        if ($v === null) {
-            $this->setCustomerId(NULL);
-        } else {
-            $this->setCustomerId($v->getId());
+        $partial = $this->collHybridAuthsPartial && !$this->isNew();
+        if (null === $this->collHybridAuths || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collHybridAuths) {
+                // return empty collection
+                $this->initHybridAuths();
+            } else {
+                $collHybridAuths = ChildHybridAuthQuery::create(null, $criteria)
+                    ->filterByProviderConfig($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collHybridAuthsPartial && count($collHybridAuths)) {
+                        $this->initHybridAuths(false);
+
+                        foreach ($collHybridAuths as $obj) {
+                            if (false == $this->collHybridAuths->contains($obj)) {
+                                $this->collHybridAuths->append($obj);
+                            }
+                        }
+
+                        $this->collHybridAuthsPartial = true;
+                    }
+
+                    reset($collHybridAuths);
+
+                    return $collHybridAuths;
+                }
+
+                if ($partial && $this->collHybridAuths) {
+                    foreach ($this->collHybridAuths as $obj) {
+                        if ($obj->isNew()) {
+                            $collHybridAuths[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collHybridAuths = $collHybridAuths;
+                $this->collHybridAuthsPartial = false;
+            }
         }
 
-        $this->aCustomer = $v;
+        return $this->collHybridAuths;
+    }
 
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the ChildCustomer object, it will not be re-added.
-        if ($v !== null) {
-            $v->addHybridAuth($this);
+    /**
+     * Sets a collection of HybridAuth objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $hybridAuths A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return   ChildProviderConfig The current object (for fluent API support)
+     */
+    public function setHybridAuths(Collection $hybridAuths, ConnectionInterface $con = null)
+    {
+        $hybridAuthsToDelete = $this->getHybridAuths(new Criteria(), $con)->diff($hybridAuths);
+
+
+        $this->hybridAuthsScheduledForDeletion = $hybridAuthsToDelete;
+
+        foreach ($hybridAuthsToDelete as $hybridAuthRemoved) {
+            $hybridAuthRemoved->setProviderConfig(null);
         }
 
+        $this->collHybridAuths = null;
+        foreach ($hybridAuths as $hybridAuth) {
+            $this->addHybridAuth($hybridAuth);
+        }
+
+        $this->collHybridAuths = $hybridAuths;
+        $this->collHybridAuthsPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related HybridAuth objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related HybridAuth objects.
+     * @throws PropelException
+     */
+    public function countHybridAuths(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collHybridAuthsPartial && !$this->isNew();
+        if (null === $this->collHybridAuths || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collHybridAuths) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getHybridAuths());
+            }
+
+            $query = ChildHybridAuthQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByProviderConfig($this)
+                ->count($con);
+        }
+
+        return count($this->collHybridAuths);
+    }
+
+    /**
+     * Method called to associate a ChildHybridAuth object to this object
+     * through the ChildHybridAuth foreign key attribute.
+     *
+     * @param    ChildHybridAuth $l ChildHybridAuth
+     * @return   \TheliaHybridAuth\Model\ProviderConfig The current object (for fluent API support)
+     */
+    public function addHybridAuth(ChildHybridAuth $l)
+    {
+        if ($this->collHybridAuths === null) {
+            $this->initHybridAuths();
+            $this->collHybridAuthsPartial = true;
+        }
+
+        if (!in_array($l, $this->collHybridAuths->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddHybridAuth($l);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param HybridAuth $hybridAuth The hybridAuth object to add.
+     */
+    protected function doAddHybridAuth($hybridAuth)
+    {
+        $this->collHybridAuths[]= $hybridAuth;
+        $hybridAuth->setProviderConfig($this);
+    }
+
+    /**
+     * @param  HybridAuth $hybridAuth The hybridAuth object to remove.
+     * @return ChildProviderConfig The current object (for fluent API support)
+     */
+    public function removeHybridAuth($hybridAuth)
+    {
+        if ($this->getHybridAuths()->contains($hybridAuth)) {
+            $this->collHybridAuths->remove($this->collHybridAuths->search($hybridAuth));
+            if (null === $this->hybridAuthsScheduledForDeletion) {
+                $this->hybridAuthsScheduledForDeletion = clone $this->collHybridAuths;
+                $this->hybridAuthsScheduledForDeletion->clear();
+            }
+            $this->hybridAuthsScheduledForDeletion[]= clone $hybridAuth;
+            $hybridAuth->setProviderConfig(null);
+        }
 
         return $this;
     }
 
 
     /**
-     * Get the associated ChildCustomer object
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this ProviderConfig is new, it will return
+     * an empty collection; or if this ProviderConfig has previously
+     * been saved, it will retrieve related HybridAuths from storage.
      *
-     * @param      ConnectionInterface $con Optional Connection object.
-     * @return                 ChildCustomer The associated ChildCustomer object.
-     * @throws PropelException
-     */
-    public function getCustomer(ConnectionInterface $con = null)
-    {
-        if ($this->aCustomer === null && ($this->customer_id !== null)) {
-            $this->aCustomer = CustomerQuery::create()->findPk($this->customer_id, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aCustomer->addHybridAuths($this);
-             */
-        }
-
-        return $this->aCustomer;
-    }
-
-    /**
-     * Declares an association between this object and a ChildProviderConfig object.
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in ProviderConfig.
      *
-     * @param                  ChildProviderConfig $v
-     * @return                 \TheliaHybridAuth\Model\HybridAuth The current object (for fluent API support)
-     * @throws PropelException
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return Collection|ChildHybridAuth[] List of ChildHybridAuth objects
      */
-    public function setProviderConfig(ChildProviderConfig $v = null)
+    public function getHybridAuthsJoinCustomer($criteria = null, $con = null, $joinBehavior = Criteria::LEFT_JOIN)
     {
-        if ($v === null) {
-            $this->setProvider(NULL);
-        } else {
-            $this->setProvider($v->getProvider());
-        }
+        $query = ChildHybridAuthQuery::create(null, $criteria);
+        $query->joinWith('Customer', $joinBehavior);
 
-        $this->aProviderConfig = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the ChildProviderConfig object, it will not be re-added.
-        if ($v !== null) {
-            $v->addHybridAuth($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated ChildProviderConfig object
-     *
-     * @param      ConnectionInterface $con Optional Connection object.
-     * @return                 ChildProviderConfig The associated ChildProviderConfig object.
-     * @throws PropelException
-     */
-    public function getProviderConfig(ConnectionInterface $con = null)
-    {
-        if ($this->aProviderConfig === null && (($this->provider !== "" && $this->provider !== null))) {
-            $this->aProviderConfig = ChildProviderConfigQuery::create()
-                ->filterByHybridAuth($this) // here
-                ->findOne($con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aProviderConfig->addHybridAuths($this);
-             */
-        }
-
-        return $this->aProviderConfig;
+        return $this->getHybridAuths($query, $con);
     }
 
     /**
@@ -1232,8 +1449,9 @@ abstract class HybridAuth implements ActiveRecordInterface
     {
         $this->id = null;
         $this->provider = null;
-        $this->token = null;
-        $this->customer_id = null;
+        $this->key = null;
+        $this->secret = null;
+        $this->enabled = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->resetModified();
@@ -1253,10 +1471,14 @@ abstract class HybridAuth implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
+            if ($this->collHybridAuths) {
+                foreach ($this->collHybridAuths as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
         } // if ($deep)
 
-        $this->aCustomer = null;
-        $this->aProviderConfig = null;
+        $this->collHybridAuths = null;
     }
 
     /**
@@ -1266,7 +1488,7 @@ abstract class HybridAuth implements ActiveRecordInterface
      */
     public function __toString()
     {
-        return (string) $this->exportTo(HybridAuthTableMap::DEFAULT_STRING_FORMAT);
+        return (string) $this->exportTo(ProviderConfigTableMap::DEFAULT_STRING_FORMAT);
     }
 
     /**

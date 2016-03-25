@@ -85,4 +85,9 @@ class FrontHook extends BaseHook
     {
         $event->add($this->render('hybrid-auth-login-dialog-js.html'));
     }
+
+    public function onMainJavascriptInitialization(HookRenderEvent $event)
+    {
+        $event->add($this->render('js-login-buttons.html'));
+    }
 }

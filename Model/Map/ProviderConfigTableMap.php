@@ -11,12 +11,12 @@ use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Map\TableMapTrait;
-use TheliaHybridAuth\Model\HybridAuth;
-use TheliaHybridAuth\Model\HybridAuthQuery;
+use TheliaHybridAuth\Model\ProviderConfig;
+use TheliaHybridAuth\Model\ProviderConfigQuery;
 
 
 /**
- * This class defines the structure of the 'hybrid_auth' table.
+ * This class defines the structure of the 'provider_config' table.
  *
  *
  *
@@ -26,14 +26,14 @@ use TheliaHybridAuth\Model\HybridAuthQuery;
  * (i.e. if it's a text column type).
  *
  */
-class HybridAuthTableMap extends TableMap
+class ProviderConfigTableMap extends TableMap
 {
     use InstancePoolTrait;
     use TableMapTrait;
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = 'TheliaHybridAuth.Model.Map.HybridAuthTableMap';
+    const CLASS_NAME = 'TheliaHybridAuth.Model.Map.ProviderConfigTableMap';
 
     /**
      * The default database name for this class
@@ -43,22 +43,22 @@ class HybridAuthTableMap extends TableMap
     /**
      * The table name for this class
      */
-    const TABLE_NAME = 'hybrid_auth';
+    const TABLE_NAME = 'provider_config';
 
     /**
      * The related Propel class for this table
      */
-    const OM_CLASS = '\\TheliaHybridAuth\\Model\\HybridAuth';
+    const OM_CLASS = '\\TheliaHybridAuth\\Model\\ProviderConfig';
 
     /**
      * A class that can be returned by this tableMap
      */
-    const CLASS_DEFAULT = 'TheliaHybridAuth.Model.HybridAuth';
+    const CLASS_DEFAULT = 'TheliaHybridAuth.Model.ProviderConfig';
 
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 4;
+    const NUM_COLUMNS = 5;
 
     /**
      * The number of lazy-loaded columns
@@ -68,27 +68,32 @@ class HybridAuthTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 4;
+    const NUM_HYDRATE_COLUMNS = 5;
 
     /**
      * the column name for the ID field
      */
-    const ID = 'hybrid_auth.ID';
+    const ID = 'provider_config.ID';
 
     /**
      * the column name for the PROVIDER field
      */
-    const PROVIDER = 'hybrid_auth.PROVIDER';
+    const PROVIDER = 'provider_config.PROVIDER';
 
     /**
-     * the column name for the TOKEN field
+     * the column name for the KEY field
      */
-    const TOKEN = 'hybrid_auth.TOKEN';
+    const KEY = 'provider_config.KEY';
 
     /**
-     * the column name for the CUSTOMER_ID field
+     * the column name for the SECRET field
      */
-    const CUSTOMER_ID = 'hybrid_auth.CUSTOMER_ID';
+    const SECRET = 'provider_config.SECRET';
+
+    /**
+     * the column name for the ENABLED field
+     */
+    const ENABLED = 'provider_config.ENABLED';
 
     /**
      * The default string format for model objects of the related table
@@ -102,12 +107,12 @@ class HybridAuthTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Provider', 'Token', 'CustomerId', ),
-        self::TYPE_STUDLYPHPNAME => array('id', 'provider', 'token', 'customerId', ),
-        self::TYPE_COLNAME       => array(HybridAuthTableMap::ID, HybridAuthTableMap::PROVIDER, HybridAuthTableMap::TOKEN, HybridAuthTableMap::CUSTOMER_ID, ),
-        self::TYPE_RAW_COLNAME   => array('ID', 'PROVIDER', 'TOKEN', 'CUSTOMER_ID', ),
-        self::TYPE_FIELDNAME     => array('id', 'provider', 'token', 'customer_id', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, )
+        self::TYPE_PHPNAME       => array('Id', 'Provider', 'Key', 'Secret', 'Enabled', ),
+        self::TYPE_STUDLYPHPNAME => array('id', 'provider', 'key', 'secret', 'enabled', ),
+        self::TYPE_COLNAME       => array(ProviderConfigTableMap::ID, ProviderConfigTableMap::PROVIDER, ProviderConfigTableMap::KEY, ProviderConfigTableMap::SECRET, ProviderConfigTableMap::ENABLED, ),
+        self::TYPE_RAW_COLNAME   => array('ID', 'PROVIDER', 'KEY', 'SECRET', 'ENABLED', ),
+        self::TYPE_FIELDNAME     => array('id', 'provider', 'key', 'secret', 'enabled', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
     /**
@@ -117,12 +122,12 @@ class HybridAuthTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Provider' => 1, 'Token' => 2, 'CustomerId' => 3, ),
-        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'provider' => 1, 'token' => 2, 'customerId' => 3, ),
-        self::TYPE_COLNAME       => array(HybridAuthTableMap::ID => 0, HybridAuthTableMap::PROVIDER => 1, HybridAuthTableMap::TOKEN => 2, HybridAuthTableMap::CUSTOMER_ID => 3, ),
-        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'PROVIDER' => 1, 'TOKEN' => 2, 'CUSTOMER_ID' => 3, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'provider' => 1, 'token' => 2, 'customer_id' => 3, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Provider' => 1, 'Key' => 2, 'Secret' => 3, 'Enabled' => 4, ),
+        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'provider' => 1, 'key' => 2, 'secret' => 3, 'enabled' => 4, ),
+        self::TYPE_COLNAME       => array(ProviderConfigTableMap::ID => 0, ProviderConfigTableMap::PROVIDER => 1, ProviderConfigTableMap::KEY => 2, ProviderConfigTableMap::SECRET => 3, ProviderConfigTableMap::ENABLED => 4, ),
+        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'PROVIDER' => 1, 'KEY' => 2, 'SECRET' => 3, 'ENABLED' => 4, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'provider' => 1, 'key' => 2, 'secret' => 3, 'enabled' => 4, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
     /**
@@ -135,16 +140,17 @@ class HybridAuthTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('hybrid_auth');
-        $this->setPhpName('HybridAuth');
-        $this->setClassName('\\TheliaHybridAuth\\Model\\HybridAuth');
+        $this->setName('provider_config');
+        $this->setPhpName('ProviderConfig');
+        $this->setClassName('\\TheliaHybridAuth\\Model\\ProviderConfig');
         $this->setPackage('TheliaHybridAuth.Model');
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
-        $this->addForeignKey('PROVIDER', 'Provider', 'VARCHAR', 'provider_config', 'PROVIDER', true, 255, null);
-        $this->addColumn('TOKEN', 'Token', 'VARCHAR', true, 255, null);
-        $this->addForeignKey('CUSTOMER_ID', 'CustomerId', 'INTEGER', 'customer', 'ID', true, null, null);
+        $this->addColumn('PROVIDER', 'Provider', 'VARCHAR', true, 255, null);
+        $this->addColumn('KEY', 'Key', 'VARCHAR', false, 255, null);
+        $this->addColumn('SECRET', 'Secret', 'VARCHAR', false, 255, null);
+        $this->addColumn('ENABLED', 'Enabled', 'BOOLEAN', true, 1, null);
     } // initialize()
 
     /**
@@ -152,9 +158,17 @@ class HybridAuthTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Customer', '\\Thelia\\Model\\Customer', RelationMap::MANY_TO_ONE, array('customer_id' => 'id', ), 'CASCADE', 'RESTRICT');
-        $this->addRelation('ProviderConfig', '\\TheliaHybridAuth\\Model\\ProviderConfig', RelationMap::MANY_TO_ONE, array('provider' => 'provider', ), 'CASCADE', 'RESTRICT');
+        $this->addRelation('HybridAuth', '\\TheliaHybridAuth\\Model\\HybridAuth', RelationMap::ONE_TO_MANY, array('provider' => 'provider', ), 'CASCADE', 'RESTRICT', 'HybridAuths');
     } // buildRelations()
+    /**
+     * Method to invalidate the instance pool of all tables related to provider_config     * by a foreign key with ON DELETE CASCADE
+     */
+    public static function clearRelatedInstancePool()
+    {
+        // Invalidate objects in ".$this->getClassNameFromBuilder($joinedTableTableMapBuilder)." instance pool,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+                HybridAuthTableMap::clearInstancePool();
+            }
 
     /**
      * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
@@ -212,7 +226,7 @@ class HybridAuthTableMap extends TableMap
      */
     public static function getOMClass($withPrefix = true)
     {
-        return $withPrefix ? HybridAuthTableMap::CLASS_DEFAULT : HybridAuthTableMap::OM_CLASS;
+        return $withPrefix ? ProviderConfigTableMap::CLASS_DEFAULT : ProviderConfigTableMap::OM_CLASS;
     }
 
     /**
@@ -226,21 +240,21 @@ class HybridAuthTableMap extends TableMap
      *
      * @throws PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
-     * @return array (HybridAuth object, last column rank)
+     * @return array (ProviderConfig object, last column rank)
      */
     public static function populateObject($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        $key = HybridAuthTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
-        if (null !== ($obj = HybridAuthTableMap::getInstanceFromPool($key))) {
+        $key = ProviderConfigTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
+        if (null !== ($obj = ProviderConfigTableMap::getInstanceFromPool($key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // $obj->hydrate($row, $offset, true); // rehydrate
-            $col = $offset + HybridAuthTableMap::NUM_HYDRATE_COLUMNS;
+            $col = $offset + ProviderConfigTableMap::NUM_HYDRATE_COLUMNS;
         } else {
-            $cls = HybridAuthTableMap::OM_CLASS;
+            $cls = ProviderConfigTableMap::OM_CLASS;
             $obj = new $cls();
             $col = $obj->hydrate($row, $offset, false, $indexType);
-            HybridAuthTableMap::addInstanceToPool($obj, $key);
+            ProviderConfigTableMap::addInstanceToPool($obj, $key);
         }
 
         return array($obj, $col);
@@ -263,8 +277,8 @@ class HybridAuthTableMap extends TableMap
         $cls = static::getOMClass(false);
         // populate the object(s)
         while ($row = $dataFetcher->fetch()) {
-            $key = HybridAuthTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
-            if (null !== ($obj = HybridAuthTableMap::getInstanceFromPool($key))) {
+            $key = ProviderConfigTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
+            if (null !== ($obj = ProviderConfigTableMap::getInstanceFromPool($key))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj->hydrate($row, 0, true); // rehydrate
@@ -273,7 +287,7 @@ class HybridAuthTableMap extends TableMap
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
-                HybridAuthTableMap::addInstanceToPool($obj, $key);
+                ProviderConfigTableMap::addInstanceToPool($obj, $key);
             } // if key exists
         }
 
@@ -294,15 +308,17 @@ class HybridAuthTableMap extends TableMap
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(HybridAuthTableMap::ID);
-            $criteria->addSelectColumn(HybridAuthTableMap::PROVIDER);
-            $criteria->addSelectColumn(HybridAuthTableMap::TOKEN);
-            $criteria->addSelectColumn(HybridAuthTableMap::CUSTOMER_ID);
+            $criteria->addSelectColumn(ProviderConfigTableMap::ID);
+            $criteria->addSelectColumn(ProviderConfigTableMap::PROVIDER);
+            $criteria->addSelectColumn(ProviderConfigTableMap::KEY);
+            $criteria->addSelectColumn(ProviderConfigTableMap::SECRET);
+            $criteria->addSelectColumn(ProviderConfigTableMap::ENABLED);
         } else {
             $criteria->addSelectColumn($alias . '.ID');
             $criteria->addSelectColumn($alias . '.PROVIDER');
-            $criteria->addSelectColumn($alias . '.TOKEN');
-            $criteria->addSelectColumn($alias . '.CUSTOMER_ID');
+            $criteria->addSelectColumn($alias . '.KEY');
+            $criteria->addSelectColumn($alias . '.SECRET');
+            $criteria->addSelectColumn($alias . '.ENABLED');
         }
     }
 
@@ -315,7 +331,7 @@ class HybridAuthTableMap extends TableMap
      */
     public static function getTableMap()
     {
-        return Propel::getServiceContainer()->getDatabaseMap(HybridAuthTableMap::DATABASE_NAME)->getTable(HybridAuthTableMap::TABLE_NAME);
+        return Propel::getServiceContainer()->getDatabaseMap(ProviderConfigTableMap::DATABASE_NAME)->getTable(ProviderConfigTableMap::TABLE_NAME);
     }
 
     /**
@@ -323,16 +339,16 @@ class HybridAuthTableMap extends TableMap
      */
     public static function buildTableMap()
     {
-      $dbMap = Propel::getServiceContainer()->getDatabaseMap(HybridAuthTableMap::DATABASE_NAME);
-      if (!$dbMap->hasTable(HybridAuthTableMap::TABLE_NAME)) {
-        $dbMap->addTableObject(new HybridAuthTableMap());
+      $dbMap = Propel::getServiceContainer()->getDatabaseMap(ProviderConfigTableMap::DATABASE_NAME);
+      if (!$dbMap->hasTable(ProviderConfigTableMap::TABLE_NAME)) {
+        $dbMap->addTableObject(new ProviderConfigTableMap());
       }
     }
 
     /**
-     * Performs a DELETE on the database, given a HybridAuth or Criteria object OR a primary key value.
+     * Performs a DELETE on the database, given a ProviderConfig or Criteria object OR a primary key value.
      *
-     * @param mixed               $values Criteria or HybridAuth object or primary key or array of primary keys
+     * @param mixed               $values Criteria or ProviderConfig object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -343,25 +359,25 @@ class HybridAuthTableMap extends TableMap
      public static function doDelete($values, ConnectionInterface $con = null)
      {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(HybridAuthTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(ProviderConfigTableMap::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
             // rename for clarity
             $criteria = $values;
-        } elseif ($values instanceof \TheliaHybridAuth\Model\HybridAuth) { // it's a model object
+        } elseif ($values instanceof \TheliaHybridAuth\Model\ProviderConfig) { // it's a model object
             // create criteria based on pk values
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
-            $criteria = new Criteria(HybridAuthTableMap::DATABASE_NAME);
-            $criteria->add(HybridAuthTableMap::ID, (array) $values, Criteria::IN);
+            $criteria = new Criteria(ProviderConfigTableMap::DATABASE_NAME);
+            $criteria->add(ProviderConfigTableMap::ID, (array) $values, Criteria::IN);
         }
 
-        $query = HybridAuthQuery::create()->mergeWith($criteria);
+        $query = ProviderConfigQuery::create()->mergeWith($criteria);
 
-        if ($values instanceof Criteria) { HybridAuthTableMap::clearInstancePool();
+        if ($values instanceof Criteria) { ProviderConfigTableMap::clearInstancePool();
         } elseif (!is_object($values)) { // it's a primary key, or an array of pks
-            foreach ((array) $values as $singleval) { HybridAuthTableMap::removeInstanceFromPool($singleval);
+            foreach ((array) $values as $singleval) { ProviderConfigTableMap::removeInstanceFromPool($singleval);
             }
         }
 
@@ -369,20 +385,20 @@ class HybridAuthTableMap extends TableMap
     }
 
     /**
-     * Deletes all rows from the hybrid_auth table.
+     * Deletes all rows from the provider_config table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
      */
     public static function doDeleteAll(ConnectionInterface $con = null)
     {
-        return HybridAuthQuery::create()->doDeleteAll($con);
+        return ProviderConfigQuery::create()->doDeleteAll($con);
     }
 
     /**
-     * Performs an INSERT on the database, given a HybridAuth or Criteria object.
+     * Performs an INSERT on the database, given a ProviderConfig or Criteria object.
      *
-     * @param mixed               $criteria Criteria or HybridAuth object containing data that is used to create the INSERT statement.
+     * @param mixed               $criteria Criteria or ProviderConfig object containing data that is used to create the INSERT statement.
      * @param ConnectionInterface $con the ConnectionInterface connection to use
      * @return mixed           The new primary key.
      * @throws PropelException Any exceptions caught during processing will be
@@ -391,22 +407,22 @@ class HybridAuthTableMap extends TableMap
     public static function doInsert($criteria, ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(HybridAuthTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(ProviderConfigTableMap::DATABASE_NAME);
         }
 
         if ($criteria instanceof Criteria) {
             $criteria = clone $criteria; // rename for clarity
         } else {
-            $criteria = $criteria->buildCriteria(); // build Criteria from HybridAuth object
+            $criteria = $criteria->buildCriteria(); // build Criteria from ProviderConfig object
         }
 
-        if ($criteria->containsKey(HybridAuthTableMap::ID) && $criteria->keyContainsValue(HybridAuthTableMap::ID) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.HybridAuthTableMap::ID.')');
+        if ($criteria->containsKey(ProviderConfigTableMap::ID) && $criteria->keyContainsValue(ProviderConfigTableMap::ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.ProviderConfigTableMap::ID.')');
         }
 
 
         // Set the correct dbName
-        $query = HybridAuthQuery::create()->mergeWith($criteria);
+        $query = ProviderConfigQuery::create()->mergeWith($criteria);
 
         try {
             // use transaction because $criteria could contain info
@@ -422,7 +438,7 @@ class HybridAuthTableMap extends TableMap
         return $pk;
     }
 
-} // HybridAuthTableMap
+} // ProviderConfigTableMap
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
-HybridAuthTableMap::buildTableMap();
+ProviderConfigTableMap::buildTableMap();

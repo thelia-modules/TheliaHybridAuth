@@ -47,7 +47,7 @@
     {elseloop rel="customer-providers"}
         <div class="row">
             <div class="col-md-12">
-                <p>{intl l="Your account is not associated with any social networks, to associate it with a new social network, try to login with it on the login page" d="theliahybridauth.fo.default"}</p>
+                <p>{intl l="Your account is not associated with any social networks" d="theliahybridauth.fo.default"}</p>
             </div>
         </div>
     {/elseloop}
@@ -58,7 +58,12 @@
             {$ASSOCIATED_PROVIDERS[]=$NAME}
         {/loop}
         <div class="col-md-12">
-            <p>{intl l="You can also associate your account with :" d="theliahybridauth.fo.default"}</p>
+            {ifloop rel="customer-providers"}
+                <p>{intl l="You can also associate your account with :" d="theliahybridauth.fo.default"}</p>
+            {/ifloop}
+            {elseloop rel="customer-providers"}
+                <p>{intl l="Associate your account with :" d="theliahybridauth.fo.default"}</p>
+            {/elseloop}
         </div>
         <div class="col-md-12">
             {loop type="providers.list" name="providers-list-not-associated" exclude="{implode(',', $ASSOCIATED_PROVIDERS)}"}

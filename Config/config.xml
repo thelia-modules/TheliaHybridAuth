@@ -51,5 +51,9 @@
             <tag name="hook.event_listener" event="main.stylesheet" type="front" method="onMainStylesheet"/>
             <argument type="service" id="request" />
         </hook>
+        <hook id="hybridauth.login.js" class="TheliaHybridAuth\Hook\FrontHook" scope="request">
+            <tag name="hook.event_listener" event="main.javascript-initialization" type="front" method="onMainJavascriptInitialization"/>
+            <argument type="service" id="request" />
+        </hook>
     </hooks>
 </config>
