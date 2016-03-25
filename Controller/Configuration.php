@@ -71,8 +71,8 @@ class Configuration extends BaseAdminController
         }
 
         try {
-            require_once(__DIR__ . '/../HybridAuth/Hybrid/Auth.php');
-            require_once(__DIR__.'/../HybridAuth/Hybrid/Endpoint.php');
+
+            TheliaHybridAuth::initHybridAuth();
 
             if (isset($_REQUEST['hauth_start']) || isset($_REQUEST['hauth_done'])) {
                 \Hybrid_Endpoint::process();
