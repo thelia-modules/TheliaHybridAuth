@@ -68,10 +68,10 @@ abstract class ProviderConfig implements ActiveRecordInterface
     protected $provider;
 
     /**
-     * The value for the key field.
+     * The value for the provider_key field.
      * @var        string
      */
-    protected $key;
+    protected $provider_key;
 
     /**
      * The value for the secret field.
@@ -386,14 +386,14 @@ abstract class ProviderConfig implements ActiveRecordInterface
     }
 
     /**
-     * Get the [key] column value.
+     * Get the [provider_key] column value.
      *
      * @return   string
      */
-    public function getKey()
+    public function getProviderKey()
     {
 
-        return $this->key;
+        return $this->provider_key;
     }
 
     /**
@@ -461,25 +461,25 @@ abstract class ProviderConfig implements ActiveRecordInterface
     } // setProvider()
 
     /**
-     * Set the value of [key] column.
+     * Set the value of [provider_key] column.
      *
      * @param      string $v new value
      * @return   \TheliaHybridAuth\Model\ProviderConfig The current object (for fluent API support)
      */
-    public function setKey($v)
+    public function setProviderKey($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->key !== $v) {
-            $this->key = $v;
-            $this->modifiedColumns[ProviderConfigTableMap::KEY] = true;
+        if ($this->provider_key !== $v) {
+            $this->provider_key = $v;
+            $this->modifiedColumns[ProviderConfigTableMap::PROVIDER_KEY] = true;
         }
 
 
         return $this;
-    } // setKey()
+    } // setProviderKey()
 
     /**
      * Set the value of [secret] column.
@@ -574,8 +574,8 @@ abstract class ProviderConfig implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : ProviderConfigTableMap::translateFieldName('Provider', TableMap::TYPE_PHPNAME, $indexType)];
             $this->provider = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ProviderConfigTableMap::translateFieldName('Key', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->key = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ProviderConfigTableMap::translateFieldName('ProviderKey', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->provider_key = (null !== $col) ? (string) $col : null;
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ProviderConfigTableMap::translateFieldName('Secret', TableMap::TYPE_PHPNAME, $indexType)];
             $this->secret = (null !== $col) ? (string) $col : null;
@@ -824,8 +824,8 @@ abstract class ProviderConfig implements ActiveRecordInterface
         if ($this->isColumnModified(ProviderConfigTableMap::PROVIDER)) {
             $modifiedColumns[':p' . $index++]  = 'PROVIDER';
         }
-        if ($this->isColumnModified(ProviderConfigTableMap::KEY)) {
-            $modifiedColumns[':p' . $index++]  = 'KEY';
+        if ($this->isColumnModified(ProviderConfigTableMap::PROVIDER_KEY)) {
+            $modifiedColumns[':p' . $index++]  = 'PROVIDER_KEY';
         }
         if ($this->isColumnModified(ProviderConfigTableMap::SECRET)) {
             $modifiedColumns[':p' . $index++]  = 'SECRET';
@@ -850,8 +850,8 @@ abstract class ProviderConfig implements ActiveRecordInterface
                     case 'PROVIDER':
                         $stmt->bindValue($identifier, $this->provider, PDO::PARAM_STR);
                         break;
-                    case 'KEY':
-                        $stmt->bindValue($identifier, $this->key, PDO::PARAM_STR);
+                    case 'PROVIDER_KEY':
+                        $stmt->bindValue($identifier, $this->provider_key, PDO::PARAM_STR);
                         break;
                     case 'SECRET':
                         $stmt->bindValue($identifier, $this->secret, PDO::PARAM_STR);
@@ -928,7 +928,7 @@ abstract class ProviderConfig implements ActiveRecordInterface
                 return $this->getProvider();
                 break;
             case 2:
-                return $this->getKey();
+                return $this->getProviderKey();
                 break;
             case 3:
                 return $this->getSecret();
@@ -967,7 +967,7 @@ abstract class ProviderConfig implements ActiveRecordInterface
         $result = array(
             $keys[0] => $this->getId(),
             $keys[1] => $this->getProvider(),
-            $keys[2] => $this->getKey(),
+            $keys[2] => $this->getProviderKey(),
             $keys[3] => $this->getSecret(),
             $keys[4] => $this->getEnabled(),
         );
@@ -1021,7 +1021,7 @@ abstract class ProviderConfig implements ActiveRecordInterface
                 $this->setProvider($value);
                 break;
             case 2:
-                $this->setKey($value);
+                $this->setProviderKey($value);
                 break;
             case 3:
                 $this->setSecret($value);
@@ -1055,7 +1055,7 @@ abstract class ProviderConfig implements ActiveRecordInterface
 
         if (array_key_exists($keys[0], $arr)) $this->setId($arr[$keys[0]]);
         if (array_key_exists($keys[1], $arr)) $this->setProvider($arr[$keys[1]]);
-        if (array_key_exists($keys[2], $arr)) $this->setKey($arr[$keys[2]]);
+        if (array_key_exists($keys[2], $arr)) $this->setProviderKey($arr[$keys[2]]);
         if (array_key_exists($keys[3], $arr)) $this->setSecret($arr[$keys[3]]);
         if (array_key_exists($keys[4], $arr)) $this->setEnabled($arr[$keys[4]]);
     }
@@ -1071,7 +1071,7 @@ abstract class ProviderConfig implements ActiveRecordInterface
 
         if ($this->isColumnModified(ProviderConfigTableMap::ID)) $criteria->add(ProviderConfigTableMap::ID, $this->id);
         if ($this->isColumnModified(ProviderConfigTableMap::PROVIDER)) $criteria->add(ProviderConfigTableMap::PROVIDER, $this->provider);
-        if ($this->isColumnModified(ProviderConfigTableMap::KEY)) $criteria->add(ProviderConfigTableMap::KEY, $this->key);
+        if ($this->isColumnModified(ProviderConfigTableMap::PROVIDER_KEY)) $criteria->add(ProviderConfigTableMap::PROVIDER_KEY, $this->provider_key);
         if ($this->isColumnModified(ProviderConfigTableMap::SECRET)) $criteria->add(ProviderConfigTableMap::SECRET, $this->secret);
         if ($this->isColumnModified(ProviderConfigTableMap::ENABLED)) $criteria->add(ProviderConfigTableMap::ENABLED, $this->enabled);
 
@@ -1138,7 +1138,7 @@ abstract class ProviderConfig implements ActiveRecordInterface
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
         $copyObj->setProvider($this->getProvider());
-        $copyObj->setKey($this->getKey());
+        $copyObj->setProviderKey($this->getProviderKey());
         $copyObj->setSecret($this->getSecret());
         $copyObj->setEnabled($this->getEnabled());
 
@@ -1449,7 +1449,7 @@ abstract class ProviderConfig implements ActiveRecordInterface
     {
         $this->id = null;
         $this->provider = null;
-        $this->key = null;
+        $this->provider_key = null;
         $this->secret = null;
         $this->enabled = null;
         $this->alreadyInSave = false;

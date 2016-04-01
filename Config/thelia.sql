@@ -4,6 +4,23 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ---------------------------------------------------------------------
+-- provider_config
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `provider_config`;
+
+CREATE TABLE `provider_config`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `provider` VARCHAR(255) NOT NULL,
+    `provider_key` VARCHAR(255),
+    `secret` VARCHAR(255),
+    `enabled` TINYINT(1) NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX `provider_unique` (`provider`)
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
 -- hybrid_auth
 -- ---------------------------------------------------------------------
 
@@ -16,8 +33,8 @@ CREATE TABLE `hybrid_auth`
     `token` VARCHAR(255) NOT NULL,
     `customer_id` INTEGER NOT NULL,
     PRIMARY KEY (`id`),
+    UNIQUE INDEX `hybrid_auth_U_1` (`provider`, `customer_id`),
     INDEX `FI_customer_id` (`customer_id`),
-    INDEX `FI_provider` (`provider`),
     CONSTRAINT `fk_customer_id`
         FOREIGN KEY (`customer_id`)
         REFERENCES `customer` (`id`)
@@ -28,23 +45,6 @@ CREATE TABLE `hybrid_auth`
         REFERENCES `provider_config` (`provider`)
         ON UPDATE RESTRICT
         ON DELETE CASCADE
-) ENGINE=InnoDB;
-
--- ---------------------------------------------------------------------
--- provider_config
--- ---------------------------------------------------------------------
-
-DROP TABLE IF EXISTS `provider_config`;
-
-CREATE TABLE `provider_config`
-(
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `provider` VARCHAR(255) NOT NULL,
-    `key` VARCHAR(255),
-    `secret` VARCHAR(255),
-    `enabled` TINYINT(1) NOT NULL,
-    PRIMARY KEY (`id`),
-    UNIQUE INDEX `provider_unique` (`provider`)
 ) ENGINE=InnoDB;
 
 # This restores the fkey checks, after having unset them earlier

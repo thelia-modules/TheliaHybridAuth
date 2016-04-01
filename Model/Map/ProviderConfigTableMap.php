@@ -81,9 +81,9 @@ class ProviderConfigTableMap extends TableMap
     const PROVIDER = 'provider_config.PROVIDER';
 
     /**
-     * the column name for the KEY field
+     * the column name for the PROVIDER_KEY field
      */
-    const KEY = 'provider_config.KEY';
+    const PROVIDER_KEY = 'provider_config.PROVIDER_KEY';
 
     /**
      * the column name for the SECRET field
@@ -107,11 +107,11 @@ class ProviderConfigTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Provider', 'Key', 'Secret', 'Enabled', ),
-        self::TYPE_STUDLYPHPNAME => array('id', 'provider', 'key', 'secret', 'enabled', ),
-        self::TYPE_COLNAME       => array(ProviderConfigTableMap::ID, ProviderConfigTableMap::PROVIDER, ProviderConfigTableMap::KEY, ProviderConfigTableMap::SECRET, ProviderConfigTableMap::ENABLED, ),
-        self::TYPE_RAW_COLNAME   => array('ID', 'PROVIDER', 'KEY', 'SECRET', 'ENABLED', ),
-        self::TYPE_FIELDNAME     => array('id', 'provider', 'key', 'secret', 'enabled', ),
+        self::TYPE_PHPNAME       => array('Id', 'Provider', 'ProviderKey', 'Secret', 'Enabled', ),
+        self::TYPE_STUDLYPHPNAME => array('id', 'provider', 'providerKey', 'secret', 'enabled', ),
+        self::TYPE_COLNAME       => array(ProviderConfigTableMap::ID, ProviderConfigTableMap::PROVIDER, ProviderConfigTableMap::PROVIDER_KEY, ProviderConfigTableMap::SECRET, ProviderConfigTableMap::ENABLED, ),
+        self::TYPE_RAW_COLNAME   => array('ID', 'PROVIDER', 'PROVIDER_KEY', 'SECRET', 'ENABLED', ),
+        self::TYPE_FIELDNAME     => array('id', 'provider', 'provider_key', 'secret', 'enabled', ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
@@ -122,11 +122,11 @@ class ProviderConfigTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Provider' => 1, 'Key' => 2, 'Secret' => 3, 'Enabled' => 4, ),
-        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'provider' => 1, 'key' => 2, 'secret' => 3, 'enabled' => 4, ),
-        self::TYPE_COLNAME       => array(ProviderConfigTableMap::ID => 0, ProviderConfigTableMap::PROVIDER => 1, ProviderConfigTableMap::KEY => 2, ProviderConfigTableMap::SECRET => 3, ProviderConfigTableMap::ENABLED => 4, ),
-        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'PROVIDER' => 1, 'KEY' => 2, 'SECRET' => 3, 'ENABLED' => 4, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'provider' => 1, 'key' => 2, 'secret' => 3, 'enabled' => 4, ),
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Provider' => 1, 'ProviderKey' => 2, 'Secret' => 3, 'Enabled' => 4, ),
+        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'provider' => 1, 'providerKey' => 2, 'secret' => 3, 'enabled' => 4, ),
+        self::TYPE_COLNAME       => array(ProviderConfigTableMap::ID => 0, ProviderConfigTableMap::PROVIDER => 1, ProviderConfigTableMap::PROVIDER_KEY => 2, ProviderConfigTableMap::SECRET => 3, ProviderConfigTableMap::ENABLED => 4, ),
+        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'PROVIDER' => 1, 'PROVIDER_KEY' => 2, 'SECRET' => 3, 'ENABLED' => 4, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'provider' => 1, 'provider_key' => 2, 'secret' => 3, 'enabled' => 4, ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
@@ -148,7 +148,7 @@ class ProviderConfigTableMap extends TableMap
         // columns
         $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
         $this->addColumn('PROVIDER', 'Provider', 'VARCHAR', true, 255, null);
-        $this->addColumn('KEY', 'Key', 'VARCHAR', false, 255, null);
+        $this->addColumn('PROVIDER_KEY', 'ProviderKey', 'VARCHAR', false, 255, null);
         $this->addColumn('SECRET', 'Secret', 'VARCHAR', false, 255, null);
         $this->addColumn('ENABLED', 'Enabled', 'BOOLEAN', true, 1, null);
     } // initialize()
@@ -310,13 +310,13 @@ class ProviderConfigTableMap extends TableMap
         if (null === $alias) {
             $criteria->addSelectColumn(ProviderConfigTableMap::ID);
             $criteria->addSelectColumn(ProviderConfigTableMap::PROVIDER);
-            $criteria->addSelectColumn(ProviderConfigTableMap::KEY);
+            $criteria->addSelectColumn(ProviderConfigTableMap::PROVIDER_KEY);
             $criteria->addSelectColumn(ProviderConfigTableMap::SECRET);
             $criteria->addSelectColumn(ProviderConfigTableMap::ENABLED);
         } else {
             $criteria->addSelectColumn($alias . '.ID');
             $criteria->addSelectColumn($alias . '.PROVIDER');
-            $criteria->addSelectColumn($alias . '.KEY');
+            $criteria->addSelectColumn($alias . '.PROVIDER_KEY');
             $criteria->addSelectColumn($alias . '.SECRET');
             $criteria->addSelectColumn($alias . '.ENABLED');
         }

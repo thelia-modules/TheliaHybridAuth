@@ -23,13 +23,13 @@ use TheliaHybridAuth\Model\Map\ProviderConfigTableMap;
  *
  * @method     ChildProviderConfigQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildProviderConfigQuery orderByProvider($order = Criteria::ASC) Order by the provider column
- * @method     ChildProviderConfigQuery orderByKey($order = Criteria::ASC) Order by the key column
+ * @method     ChildProviderConfigQuery orderByProviderKey($order = Criteria::ASC) Order by the provider_key column
  * @method     ChildProviderConfigQuery orderBySecret($order = Criteria::ASC) Order by the secret column
  * @method     ChildProviderConfigQuery orderByEnabled($order = Criteria::ASC) Order by the enabled column
  *
  * @method     ChildProviderConfigQuery groupById() Group by the id column
  * @method     ChildProviderConfigQuery groupByProvider() Group by the provider column
- * @method     ChildProviderConfigQuery groupByKey() Group by the key column
+ * @method     ChildProviderConfigQuery groupByProviderKey() Group by the provider_key column
  * @method     ChildProviderConfigQuery groupBySecret() Group by the secret column
  * @method     ChildProviderConfigQuery groupByEnabled() Group by the enabled column
  *
@@ -46,13 +46,13 @@ use TheliaHybridAuth\Model\Map\ProviderConfigTableMap;
  *
  * @method     ChildProviderConfig findOneById(int $id) Return the first ChildProviderConfig filtered by the id column
  * @method     ChildProviderConfig findOneByProvider(string $provider) Return the first ChildProviderConfig filtered by the provider column
- * @method     ChildProviderConfig findOneByKey(string $key) Return the first ChildProviderConfig filtered by the key column
+ * @method     ChildProviderConfig findOneByProviderKey(string $provider_key) Return the first ChildProviderConfig filtered by the provider_key column
  * @method     ChildProviderConfig findOneBySecret(string $secret) Return the first ChildProviderConfig filtered by the secret column
  * @method     ChildProviderConfig findOneByEnabled(boolean $enabled) Return the first ChildProviderConfig filtered by the enabled column
  *
  * @method     array findById(int $id) Return ChildProviderConfig objects filtered by the id column
  * @method     array findByProvider(string $provider) Return ChildProviderConfig objects filtered by the provider column
- * @method     array findByKey(string $key) Return ChildProviderConfig objects filtered by the key column
+ * @method     array findByProviderKey(string $provider_key) Return ChildProviderConfig objects filtered by the provider_key column
  * @method     array findBySecret(string $secret) Return ChildProviderConfig objects filtered by the secret column
  * @method     array findByEnabled(boolean $enabled) Return ChildProviderConfig objects filtered by the enabled column
  *
@@ -143,7 +143,7 @@ abstract class ProviderConfigQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT ID, PROVIDER, KEY, SECRET, ENABLED FROM provider_config WHERE ID = :p0';
+        $sql = 'SELECT ID, PROVIDER, PROVIDER_KEY, SECRET, ENABLED FROM provider_config WHERE ID = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -303,32 +303,32 @@ abstract class ProviderConfigQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the key column
+     * Filter the query on the provider_key column
      *
      * Example usage:
      * <code>
-     * $query->filterByKey('fooValue');   // WHERE key = 'fooValue'
-     * $query->filterByKey('%fooValue%'); // WHERE key LIKE '%fooValue%'
+     * $query->filterByProviderKey('fooValue');   // WHERE provider_key = 'fooValue'
+     * $query->filterByProviderKey('%fooValue%'); // WHERE provider_key LIKE '%fooValue%'
      * </code>
      *
-     * @param     string $key The value to use as filter.
+     * @param     string $providerKey The value to use as filter.
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return ChildProviderConfigQuery The current query, for fluid interface
      */
-    public function filterByKey($key = null, $comparison = null)
+    public function filterByProviderKey($providerKey = null, $comparison = null)
     {
         if (null === $comparison) {
-            if (is_array($key)) {
+            if (is_array($providerKey)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $key)) {
-                $key = str_replace('*', '%', $key);
+            } elseif (preg_match('/[\%\*]/', $providerKey)) {
+                $providerKey = str_replace('*', '%', $providerKey);
                 $comparison = Criteria::LIKE;
             }
         }
 
-        return $this->addUsingAlias(ProviderConfigTableMap::KEY, $key, $comparison);
+        return $this->addUsingAlias(ProviderConfigTableMap::PROVIDER_KEY, $providerKey, $comparison);
     }
 
     /**

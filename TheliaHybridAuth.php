@@ -59,8 +59,8 @@ class TheliaHybridAuth extends BaseModule
                 $providerName => array(
                     "enabled" => true,
                     "keys" => array(
-                        "id" => $providerConfig->getKey(),
-                        "key" => $providerConfig->getKey(),
+                        "id" => $providerConfig->getProviderKey(),
+                        "key" => $providerConfig->getProviderKey(),
                         "secret" => $providerConfig->getSecret()
                     )
                 )

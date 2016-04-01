@@ -43,7 +43,7 @@ class Configuration extends BaseAdminController
             ));
         }
 
-        $providerId = $providerConfig->getKey();
+        $providerId = $providerConfig->getProviderKey();
         $providerSecret = $providerConfig->getSecret();
 
         $form = $this->createForm('update.provider', 'form', array(
@@ -126,10 +126,11 @@ class Configuration extends BaseAdminController
                 ));
             }
 
-            (new ProviderConfig())
+            $providerConfig = new ProviderConfig();
+            $providerConfig
                 ->setProvider($providerName)
                 ->setEnabled(false)
-                ->setKey($providerId)
+                ->setProviderKey($providerId)
                 ->setSecret($providerSecret)
                 ->save()
             ;
@@ -145,7 +146,6 @@ class Configuration extends BaseAdminController
                 TheliaHybridAuth::DOMAIN_NAME
             );
         }
-
         $formProvider->setErrorMessage($message);
 
         $this->getParserContext()
@@ -179,7 +179,7 @@ class Configuration extends BaseAdminController
             $providerConfig = ProviderConfigQuery::create()->filterByProvider($providerName)->findOne();
 
             $providerConfig
-                ->setKey($form->get('id')->getData())
+                ->setProviderKey($form->get('id')->getData())
                 ->setSecret($form->get('secret')->getData())
                 ->save()
             ;
