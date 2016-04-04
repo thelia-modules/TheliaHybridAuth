@@ -5,12 +5,17 @@
                 <div class="col-md-12">
                     {if $smarty.get.error == 0 }
                         <div class="alert alert-success" role="alert">
-                            {intl l="The id and secret for %provider are valid" provider={$smarty.get.provider} d="theliahybridauth.bo.default"}
+                            {intl l="The information for %provider are valid" provider={$smarty.get.provider} d="theliahybridauth.bo.default"}
                         </div>
                     {/if}
                     {if $smarty.get.error == 1 }
                         <div class="alert alert-danger" role="alert">
-                            {intl l="Error, check your id and secret for %provider" provider={$smarty.get.provider} d="theliahybridauth.bo.defautl"}
+                            {intl l="Error, check your information for %provider" provider={$smarty.get.provider} d="theliahybridauth.bo.defautl"}
+                        </div>
+                    {/if}
+                    {if $smarty.get.error == 2}
+                        <div class="alert alert-danger" role="alert">
+                            {intl l="The email address is not returned, please check your scope. For more information, contact %provider" provider={$smarty.get.provider} d="theliahybridauth.bo.default"}
                         </div>
                     {/if}
                 </div>
@@ -144,6 +149,13 @@
                             {form_field field='secret'}
                                 <div class="form-group {if $error}has-error{/if}">
                                     <label for="{$label_attr.for}">{$label}</label>
+                                    <input type="text" id="{$label_attr.for}" class="form-control" name="{$name}" value="{$value}"/>
+                                </div>
+                            {/form_field}
+                            {form_field field='scope'}
+                                <div class="form-group {if $error}has-error{/if}">
+                                    <label for="{$label_attr.for}">{$label}</label>
+                                    <span>{intl l="(optionnal : enter the parameters separated by a comma). For more information, check the provider documentation" d="theliahybridauth.bo.default"}</span>
                                     <input type="text" id="{$label_attr.for}" class="form-control" name="{$name}" value="{$value}"/>
                                 </div>
                             {/form_field}

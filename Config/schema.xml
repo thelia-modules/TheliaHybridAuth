@@ -9,6 +9,7 @@
         <column name="provider_key" size="255" type="VARCHAR" />
         <column name="secret" size="255" type="VARCHAR" />
         <column name="enabled" required="true" type="BOOLEAN"/>
+        <column name="scope" size="255" type="VARCHAR"/>
         <unique name="provider_unique">
             <unique-column name="provider" />
         </unique>

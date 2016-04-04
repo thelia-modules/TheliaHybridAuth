@@ -58,7 +58,7 @@ class ProviderConfigTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 5;
+    const NUM_COLUMNS = 6;
 
     /**
      * The number of lazy-loaded columns
@@ -68,7 +68,7 @@ class ProviderConfigTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 5;
+    const NUM_HYDRATE_COLUMNS = 6;
 
     /**
      * the column name for the ID field
@@ -96,6 +96,11 @@ class ProviderConfigTableMap extends TableMap
     const ENABLED = 'provider_config.ENABLED';
 
     /**
+     * the column name for the SCOPE field
+     */
+    const SCOPE = 'provider_config.SCOPE';
+
+    /**
      * The default string format for model objects of the related table
      */
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -107,12 +112,12 @@ class ProviderConfigTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Provider', 'ProviderKey', 'Secret', 'Enabled', ),
-        self::TYPE_STUDLYPHPNAME => array('id', 'provider', 'providerKey', 'secret', 'enabled', ),
-        self::TYPE_COLNAME       => array(ProviderConfigTableMap::ID, ProviderConfigTableMap::PROVIDER, ProviderConfigTableMap::PROVIDER_KEY, ProviderConfigTableMap::SECRET, ProviderConfigTableMap::ENABLED, ),
-        self::TYPE_RAW_COLNAME   => array('ID', 'PROVIDER', 'PROVIDER_KEY', 'SECRET', 'ENABLED', ),
-        self::TYPE_FIELDNAME     => array('id', 'provider', 'provider_key', 'secret', 'enabled', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
+        self::TYPE_PHPNAME       => array('Id', 'Provider', 'ProviderKey', 'Secret', 'Enabled', 'Scope', ),
+        self::TYPE_STUDLYPHPNAME => array('id', 'provider', 'providerKey', 'secret', 'enabled', 'scope', ),
+        self::TYPE_COLNAME       => array(ProviderConfigTableMap::ID, ProviderConfigTableMap::PROVIDER, ProviderConfigTableMap::PROVIDER_KEY, ProviderConfigTableMap::SECRET, ProviderConfigTableMap::ENABLED, ProviderConfigTableMap::SCOPE, ),
+        self::TYPE_RAW_COLNAME   => array('ID', 'PROVIDER', 'PROVIDER_KEY', 'SECRET', 'ENABLED', 'SCOPE', ),
+        self::TYPE_FIELDNAME     => array('id', 'provider', 'provider_key', 'secret', 'enabled', 'scope', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
 
     /**
@@ -122,12 +127,12 @@ class ProviderConfigTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Provider' => 1, 'ProviderKey' => 2, 'Secret' => 3, 'Enabled' => 4, ),
-        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'provider' => 1, 'providerKey' => 2, 'secret' => 3, 'enabled' => 4, ),
-        self::TYPE_COLNAME       => array(ProviderConfigTableMap::ID => 0, ProviderConfigTableMap::PROVIDER => 1, ProviderConfigTableMap::PROVIDER_KEY => 2, ProviderConfigTableMap::SECRET => 3, ProviderConfigTableMap::ENABLED => 4, ),
-        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'PROVIDER' => 1, 'PROVIDER_KEY' => 2, 'SECRET' => 3, 'ENABLED' => 4, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'provider' => 1, 'provider_key' => 2, 'secret' => 3, 'enabled' => 4, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Provider' => 1, 'ProviderKey' => 2, 'Secret' => 3, 'Enabled' => 4, 'Scope' => 5, ),
+        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'provider' => 1, 'providerKey' => 2, 'secret' => 3, 'enabled' => 4, 'scope' => 5, ),
+        self::TYPE_COLNAME       => array(ProviderConfigTableMap::ID => 0, ProviderConfigTableMap::PROVIDER => 1, ProviderConfigTableMap::PROVIDER_KEY => 2, ProviderConfigTableMap::SECRET => 3, ProviderConfigTableMap::ENABLED => 4, ProviderConfigTableMap::SCOPE => 5, ),
+        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'PROVIDER' => 1, 'PROVIDER_KEY' => 2, 'SECRET' => 3, 'ENABLED' => 4, 'SCOPE' => 5, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'provider' => 1, 'provider_key' => 2, 'secret' => 3, 'enabled' => 4, 'scope' => 5, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
 
     /**
@@ -151,6 +156,7 @@ class ProviderConfigTableMap extends TableMap
         $this->addColumn('PROVIDER_KEY', 'ProviderKey', 'VARCHAR', false, 255, null);
         $this->addColumn('SECRET', 'Secret', 'VARCHAR', false, 255, null);
         $this->addColumn('ENABLED', 'Enabled', 'BOOLEAN', true, 1, null);
+        $this->addColumn('SCOPE', 'Scope', 'VARCHAR', false, 255, null);
     } // initialize()
 
     /**
@@ -313,12 +319,14 @@ class ProviderConfigTableMap extends TableMap
             $criteria->addSelectColumn(ProviderConfigTableMap::PROVIDER_KEY);
             $criteria->addSelectColumn(ProviderConfigTableMap::SECRET);
             $criteria->addSelectColumn(ProviderConfigTableMap::ENABLED);
+            $criteria->addSelectColumn(ProviderConfigTableMap::SCOPE);
         } else {
             $criteria->addSelectColumn($alias . '.ID');
             $criteria->addSelectColumn($alias . '.PROVIDER');
             $criteria->addSelectColumn($alias . '.PROVIDER_KEY');
             $criteria->addSelectColumn($alias . '.SECRET');
             $criteria->addSelectColumn($alias . '.ENABLED');
+            $criteria->addSelectColumn($alias . '.SCOPE');
         }
     }
 

@@ -45,10 +45,12 @@ class Configuration extends BaseAdminController
 
         $providerId = $providerConfig->getProviderKey();
         $providerSecret = $providerConfig->getSecret();
+        $providerScope = $providerConfig->getScope();
 
         $form = $this->createForm('update.provider', 'form', array(
             'id' => $providerId,
             'secret' => $providerSecret,
+            'scope' => $providerScope
         ));
 
         $this->getParserContext()->addForm($form);
@@ -74,27 +76,34 @@ class Configuration extends BaseAdminController
 
             TheliaHybridAuth::initHybridAuth();
 
-            if (isset($_REQUEST['hauth_start']) || isset($_REQUEST['hauth_done'])) {
-                \Hybrid_Endpoint::process();
-            }
-
             $config = TheliaHybridAuth::getConfigByProvider($providerName);
 
             $hybridauth = new \Hybrid_Auth($config);
 
-            $hybridauth->authenticate(
+            $provider = $hybridauth->authenticate(
                 $providerName,
                 array(URL::getInstance()->retrieveCurrent($this->getRequest()))
             );
 
+            $mail = ($provider->getUserProfile()->emailVerified) ?
+                $provider->getUserProfile()->emailVerified : $provider->getUserProfile()->email;
+
+            if (null === $mail) {
+                throw new \Exception('2');
+            }
         } catch (\Exception $e) {
             $message = $e->getMessage();
+            if ($message == 2) {
+                $error = 2;
+            } else {
+                $error = 1;
+            }
         }
 
         return $this->generateRedirectFromRoute(
             'admin.module.configure',
             array(
-                "error" => (isset($message)) ? 1 : 0,
+                "error" => (isset($error)) ? $error : 0,
                 "provider" => $providerName
             ),
             array('module_code' => 'TheliaHybridAuth')
@@ -117,6 +126,7 @@ class Configuration extends BaseAdminController
             $providerName = $form->get('name')->getData();
             $providerId = $form->get('id')->getData();
             $providerSecret = $form->get('secret')->getData();
+            $providerScope = trim($form->get('scope')->getData());
 
             if (null !== ProviderConfigQuery::create()->filterByProvider($providerName)->findOne()) {
                 throw new \Exception(Translator::getInstance()->trans(
@@ -132,6 +142,7 @@ class Configuration extends BaseAdminController
                 ->setEnabled(false)
                 ->setProviderKey($providerId)
                 ->setSecret($providerSecret)
+                ->setScope($providerScope)
                 ->save()
             ;
 
@@ -181,6 +192,7 @@ class Configuration extends BaseAdminController
             $providerConfig
                 ->setProviderKey($form->get('id')->getData())
                 ->setSecret($form->get('secret')->getData())
+                ->setScope(trim($form->get('scope')->getData()))
                 ->save()
             ;
 

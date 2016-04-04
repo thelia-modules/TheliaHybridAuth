@@ -50,11 +50,17 @@ class CreateProvider extends BaseProvider
                 'required' => true,
                 'label' => Translator::getInstance()->trans('Secret', array(), TheliaHybridAuth::DOMAIN_NAME),
                 'label_attr' => array(
-                    'for' => 'se'
+                    'for' => 'secret'
                 ),
                 "constraints" => array(
                     new Constraints\NotBlank()
                 ),
+            ))
+            ->add('scope', 'text', array(
+                'label' => Translator::getInstance()->trans('Scope', array(), TheliaHybridAuth::DOMAIN_NAME),
+                'label_attr' => array(
+                    'for' => 'scope'
+                )
             ))
         ;
     }

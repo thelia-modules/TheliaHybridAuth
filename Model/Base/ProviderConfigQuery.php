@@ -26,12 +26,14 @@ use TheliaHybridAuth\Model\Map\ProviderConfigTableMap;
  * @method     ChildProviderConfigQuery orderByProviderKey($order = Criteria::ASC) Order by the provider_key column
  * @method     ChildProviderConfigQuery orderBySecret($order = Criteria::ASC) Order by the secret column
  * @method     ChildProviderConfigQuery orderByEnabled($order = Criteria::ASC) Order by the enabled column
+ * @method     ChildProviderConfigQuery orderByScope($order = Criteria::ASC) Order by the scope column
  *
  * @method     ChildProviderConfigQuery groupById() Group by the id column
  * @method     ChildProviderConfigQuery groupByProvider() Group by the provider column
  * @method     ChildProviderConfigQuery groupByProviderKey() Group by the provider_key column
  * @method     ChildProviderConfigQuery groupBySecret() Group by the secret column
  * @method     ChildProviderConfigQuery groupByEnabled() Group by the enabled column
+ * @method     ChildProviderConfigQuery groupByScope() Group by the scope column
  *
  * @method     ChildProviderConfigQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildProviderConfigQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -49,12 +51,14 @@ use TheliaHybridAuth\Model\Map\ProviderConfigTableMap;
  * @method     ChildProviderConfig findOneByProviderKey(string $provider_key) Return the first ChildProviderConfig filtered by the provider_key column
  * @method     ChildProviderConfig findOneBySecret(string $secret) Return the first ChildProviderConfig filtered by the secret column
  * @method     ChildProviderConfig findOneByEnabled(boolean $enabled) Return the first ChildProviderConfig filtered by the enabled column
+ * @method     ChildProviderConfig findOneByScope(string $scope) Return the first ChildProviderConfig filtered by the scope column
  *
  * @method     array findById(int $id) Return ChildProviderConfig objects filtered by the id column
  * @method     array findByProvider(string $provider) Return ChildProviderConfig objects filtered by the provider column
  * @method     array findByProviderKey(string $provider_key) Return ChildProviderConfig objects filtered by the provider_key column
  * @method     array findBySecret(string $secret) Return ChildProviderConfig objects filtered by the secret column
  * @method     array findByEnabled(boolean $enabled) Return ChildProviderConfig objects filtered by the enabled column
+ * @method     array findByScope(string $scope) Return ChildProviderConfig objects filtered by the scope column
  *
  */
 abstract class ProviderConfigQuery extends ModelCriteria
@@ -143,7 +147,7 @@ abstract class ProviderConfigQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT ID, PROVIDER, PROVIDER_KEY, SECRET, ENABLED FROM provider_config WHERE ID = :p0';
+        $sql = 'SELECT ID, PROVIDER, PROVIDER_KEY, SECRET, ENABLED, SCOPE FROM provider_config WHERE ID = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -385,6 +389,35 @@ abstract class ProviderConfigQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(ProviderConfigTableMap::ENABLED, $enabled, $comparison);
+    }
+
+    /**
+     * Filter the query on the scope column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByScope('fooValue');   // WHERE scope = 'fooValue'
+     * $query->filterByScope('%fooValue%'); // WHERE scope LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $scope The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildProviderConfigQuery The current query, for fluid interface
+     */
+    public function filterByScope($scope = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($scope)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $scope)) {
+                $scope = str_replace('*', '%', $scope);
+                $comparison = Criteria::LIKE;
+            }
+        }
+
+        return $this->addUsingAlias(ProviderConfigTableMap::SCOPE, $scope, $comparison);
     }
 
     /**

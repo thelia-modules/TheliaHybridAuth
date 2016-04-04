@@ -8,6 +8,10 @@
         <default key="_controller">TheliaHybridAuth\Controller\HybridAuthCustomerController::loginAction</default>
     </route>
 
+    <route id="hybridauth.process" path="/hybridauth/process">
+        <default key="_controller">TheliaHybridAuth\Controller\HybridAuthProcess::processAction</default>
+    </route>
+
     <route id="hybridauth.connect.post" path="/login/hybridauth" methods="POST">
         <default key="_controller">TheliaHybridAuth\Controller\HybridAuthCustomerController::linkAction</default>
     </route>

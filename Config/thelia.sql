@@ -16,6 +16,7 @@ CREATE TABLE `provider_config`
     `provider_key` VARCHAR(255),
     `secret` VARCHAR(255),
     `enabled` TINYINT(1) NOT NULL,
+    `scope` VARCHAR(255),
     PRIMARY KEY (`id`),
     UNIQUE INDEX `provider_unique` (`provider`)
 ) ENGINE=InnoDB;

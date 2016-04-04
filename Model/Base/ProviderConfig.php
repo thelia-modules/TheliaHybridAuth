@@ -86,6 +86,12 @@ abstract class ProviderConfig implements ActiveRecordInterface
     protected $enabled;
 
     /**
+     * The value for the scope field.
+     * @var        string
+     */
+    protected $scope;
+
+    /**
      * @var        ObjectCollection|ChildHybridAuth[] Collection to store aggregation of ChildHybridAuth objects.
      */
     protected $collHybridAuths;
@@ -419,6 +425,17 @@ abstract class ProviderConfig implements ActiveRecordInterface
     }
 
     /**
+     * Get the [scope] column value.
+     *
+     * @return   string
+     */
+    public function getScope()
+    {
+
+        return $this->scope;
+    }
+
+    /**
      * Set the value of [id] column.
      *
      * @param      int $v new value
@@ -532,6 +549,27 @@ abstract class ProviderConfig implements ActiveRecordInterface
     } // setEnabled()
 
     /**
+     * Set the value of [scope] column.
+     *
+     * @param      string $v new value
+     * @return   \TheliaHybridAuth\Model\ProviderConfig The current object (for fluent API support)
+     */
+    public function setScope($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->scope !== $v) {
+            $this->scope = $v;
+            $this->modifiedColumns[ProviderConfigTableMap::SCOPE] = true;
+        }
+
+
+        return $this;
+    } // setScope()
+
+    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -582,6 +620,9 @@ abstract class ProviderConfig implements ActiveRecordInterface
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ProviderConfigTableMap::translateFieldName('Enabled', TableMap::TYPE_PHPNAME, $indexType)];
             $this->enabled = (null !== $col) ? (boolean) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : ProviderConfigTableMap::translateFieldName('Scope', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->scope = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -590,7 +631,7 @@ abstract class ProviderConfig implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 5; // 5 = ProviderConfigTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 6; // 6 = ProviderConfigTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException("Error populating \TheliaHybridAuth\Model\ProviderConfig object", 0, $e);
@@ -833,6 +874,9 @@ abstract class ProviderConfig implements ActiveRecordInterface
         if ($this->isColumnModified(ProviderConfigTableMap::ENABLED)) {
             $modifiedColumns[':p' . $index++]  = 'ENABLED';
         }
+        if ($this->isColumnModified(ProviderConfigTableMap::SCOPE)) {
+            $modifiedColumns[':p' . $index++]  = 'SCOPE';
+        }
 
         $sql = sprintf(
             'INSERT INTO provider_config (%s) VALUES (%s)',
@@ -858,6 +902,9 @@ abstract class ProviderConfig implements ActiveRecordInterface
                         break;
                     case 'ENABLED':
                         $stmt->bindValue($identifier, (int) $this->enabled, PDO::PARAM_INT);
+                        break;
+                    case 'SCOPE':
+                        $stmt->bindValue($identifier, $this->scope, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -936,6 +983,9 @@ abstract class ProviderConfig implements ActiveRecordInterface
             case 4:
                 return $this->getEnabled();
                 break;
+            case 5:
+                return $this->getScope();
+                break;
             default:
                 return null;
                 break;
@@ -970,6 +1020,7 @@ abstract class ProviderConfig implements ActiveRecordInterface
             $keys[2] => $this->getProviderKey(),
             $keys[3] => $this->getSecret(),
             $keys[4] => $this->getEnabled(),
+            $keys[5] => $this->getScope(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -1029,6 +1080,9 @@ abstract class ProviderConfig implements ActiveRecordInterface
             case 4:
                 $this->setEnabled($value);
                 break;
+            case 5:
+                $this->setScope($value);
+                break;
         } // switch()
     }
 
@@ -1058,6 +1112,7 @@ abstract class ProviderConfig implements ActiveRecordInterface
         if (array_key_exists($keys[2], $arr)) $this->setProviderKey($arr[$keys[2]]);
         if (array_key_exists($keys[3], $arr)) $this->setSecret($arr[$keys[3]]);
         if (array_key_exists($keys[4], $arr)) $this->setEnabled($arr[$keys[4]]);
+        if (array_key_exists($keys[5], $arr)) $this->setScope($arr[$keys[5]]);
     }
 
     /**
@@ -1074,6 +1129,7 @@ abstract class ProviderConfig implements ActiveRecordInterface
         if ($this->isColumnModified(ProviderConfigTableMap::PROVIDER_KEY)) $criteria->add(ProviderConfigTableMap::PROVIDER_KEY, $this->provider_key);
         if ($this->isColumnModified(ProviderConfigTableMap::SECRET)) $criteria->add(ProviderConfigTableMap::SECRET, $this->secret);
         if ($this->isColumnModified(ProviderConfigTableMap::ENABLED)) $criteria->add(ProviderConfigTableMap::ENABLED, $this->enabled);
+        if ($this->isColumnModified(ProviderConfigTableMap::SCOPE)) $criteria->add(ProviderConfigTableMap::SCOPE, $this->scope);
 
         return $criteria;
     }
@@ -1141,6 +1197,7 @@ abstract class ProviderConfig implements ActiveRecordInterface
         $copyObj->setProviderKey($this->getProviderKey());
         $copyObj->setSecret($this->getSecret());
         $copyObj->setEnabled($this->getEnabled());
+        $copyObj->setScope($this->getScope());
 
         if ($deepCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
@@ -1452,6 +1509,7 @@ abstract class ProviderConfig implements ActiveRecordInterface
         $this->provider_key = null;
         $this->secret = null;
         $this->enabled = null;
+        $this->scope = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->resetModified();

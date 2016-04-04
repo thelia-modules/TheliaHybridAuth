@@ -47,10 +47,6 @@ class HybridAuthCustomerController extends CustomerController
 
             TheliaHybridAuth::initHybridAuth();
 
-            if (isset($_REQUEST['hauth_start']) || isset($_REQUEST['hauth_done'])) {
-                \Hybrid_Endpoint::process();
-            }
-
             $providerName = ucfirst($this->getRequest()->get('provider'));
 
             $config = TheliaHybridAuth::getConfigByProvider($providerName);
@@ -128,10 +124,6 @@ class HybridAuthCustomerController extends CustomerController
         try {
 
             TheliaHybridAuth::initHybridAuth();
-
-            if (isset($_REQUEST['hauth_start']) || isset($_REQUEST['hauth_done'])) {
-                \Hybrid_Endpoint::process();
-            }
 
             $config = TheliaHybridAuth::getConfigByProvider($providerName);
 
@@ -265,10 +257,6 @@ class HybridAuthCustomerController extends CustomerController
         if (! $this->getSecurityContext()->hasCustomerUser()) {
 
             TheliaHybridAuth::initHybridAuth();
-
-            if (isset($_REQUEST['hauth_start']) || isset($_REQUEST['hauth_done'])) {
-                \Hybrid_Endpoint::process();
-            }
 
             $providerName = ucfirst($this->getRequest()->get('provider'));
 
