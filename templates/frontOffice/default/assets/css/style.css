@@ -2,8 +2,10 @@
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    margin-bottom: 15px;
     font-size: 16px;
+    font-weight: 600;
+}
+#social-login + .h4{
     font-weight: 600;
 }
 .link-social-login{
