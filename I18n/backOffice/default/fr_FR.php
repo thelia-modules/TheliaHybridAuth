@@ -1,6 +1,7 @@
 <?php
 
 return array(
+    '(optionnal : enter the parameters separated by a comma). For more information, check the provider documentation' => '(optionnel : entrez les paramètres séparés par une virgule). Pour plus d\'informations, voir la documentation du fournisseur',
     'Action' => 'Action',
     'Activated' => 'Activé',
     'Add a provider' => 'Ajouter un fournisseur',
@@ -13,14 +14,15 @@ return array(
     'Delete' => 'Supprimer',
     'Delete provider' => 'Supprimer',
     'Edit' => 'Editer',
-    'Edit a provider' => 'Edition d\'un fournisseur',
     'Edit action' => 'Editer',
-    'Error, check your id and secret for %provider' => 'Erreur, vérifiez votre id et mot de passe pour %provider',
+    'Edit provider' => 'Modifier ce provider',
+    'Error, check your information for %provider' => 'Erreur, vérifiez vos informations pour %provider',
     'Logo' => 'Logo',
     'Name' => 'Nom',
     'Providers list' => 'Liste des fournisseurs',
     'Test' => 'Tester',
-    'The id and secret for %provider are valid' => 'L\'id et le mot de passe pour %provider sont valides',
+    'The email address is not returned, please check your scope. For more information, contact %provider' => 'L\'adresse email n\'a pu être récupéré, merci de vérifier votre scope. Pour plus d\'informations, contactez %provider',
+    'The information for %provider are valid' => 'Les informations pour %provider sont valides',
     'activate %name' => 'activer %name',
     'activation' => 'activation',
     'deactivation' => 'Désactivation',

@@ -10,6 +10,7 @@ return array(
     'Please check your input: %s' => 'Merci de vérifier votre entrée : %s',
     'Please enter your password' => 'Merci d\'entrer votre mot de passe',
     'Provider not found' => 'Fournisseur non trouvé',
+    'Scope' => 'Scope',
     'Secret' => 'Mot de passe',
     'Sorry, an error occured: %s' => 'Désolé, une erreur s\'est produite : %s',
     'The provider %name doesn\'t exist' => 'Le fournisseur %name n\'existe pas',
