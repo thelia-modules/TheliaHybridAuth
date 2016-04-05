@@ -8,10 +8,10 @@
 
 namespace TheliaHybridAuth\Controller;
 
-use Thelia\Controller\Admin\BaseAdminController;
+use Thelia\Controller\Front\BaseFrontController;
 use TheliaHybridAuth\TheliaHybridAuth;
 
-class HybridAuthProcess extends BaseAdminController
+class HybridAuthProcess extends BaseFrontController
 {
     public function processAction()
     {

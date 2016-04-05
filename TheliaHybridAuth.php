@@ -72,10 +72,10 @@ class TheliaHybridAuth extends BaseModule
 
     public static function initHybridAuth()
     {
-        if (!class_exists('Auth.php')) {
+        if (!class_exists('Hybrid_Auth')) {
             require_once(__DIR__ . '/HybridAuth/Hybrid/Auth.php');
         }
-        if (!class_exists('Endpoint.php')) {
+        if (!class_exists('Hybrid_Endpoint')) {
             require_once(__DIR__.'/HybridAuth/Hybrid/Endpoint.php');
         }
     }
