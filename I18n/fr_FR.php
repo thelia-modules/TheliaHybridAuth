@@ -4,7 +4,7 @@ return array(
     '%provider delete' => '%provider supprimé',
     'Name' => 'Nom',
     'Oops an error occured : %e' => 'Oops une erreur s\'est produite : %e',
-    'Oops, something went wrong : %e  Your session may have passed away, try to log in again' => 'Oops, un problème est survenu : %e Votre session peut avoir expiré, essayer de vous connecter de nouveau',
+    'Oops, something went wrong : %e  Your session may have passed away, try to log in again' => 'Oops, un problème est survenu : %e Votre session peut avoir expiré, essayez de vous connecter de nouveau',
     'Password' => 'Mot de passe',
     'Password confirmation' => 'Confirmation du mot de passe',
     'Please check your input: %s' => 'Merci de vérifier votre entrée : %s',

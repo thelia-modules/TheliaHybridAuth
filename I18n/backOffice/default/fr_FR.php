@@ -6,7 +6,7 @@ return array(
     'Activated' => 'Activé',
     'Add a provider' => 'Ajouter un fournisseur',
     'Add action' => 'Ajouter',
-    'Are you sure you want to delete this provider ?' => 'Etes vous sur de vouloir supprimer ce fournisseur ?',
+    'Are you sure you want to delete this provider ?' => 'Êtes-vous sur de vouloir supprimer ce fournisseur ?',
     'Close' => 'Fermer',
     'Close action' => 'Fermer',
     'Create' => 'Créer',
