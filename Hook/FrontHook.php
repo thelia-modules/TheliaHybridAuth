@@ -73,6 +73,7 @@ class FrontHook extends BaseHook
 
     public function onMainStylesheet(HookRenderEvent $event)
     {
+        $event->add($this->addCSS('assets/css/zocial.css'));
         $event->add($this->addCSS('assets/css/style.css'));
     }
 
