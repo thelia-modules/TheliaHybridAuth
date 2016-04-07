@@ -14,7 +14,7 @@ This module allows users to connect and register with social networks such as Fa
 Add it in your main thelia composer.json file
 
 ```
-composer require thelia/thelia-hybrid-auth-module:~1.0
+composer require thelia/thelia-hybrid-auth-module:~1.0.0
 ```
 
 ## Usage
