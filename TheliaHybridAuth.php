@@ -16,6 +16,7 @@ use Propel\Runtime\Connection\ConnectionInterface;
 use Thelia\Install\Database;
 use Thelia\Module\BaseModule;
 use Thelia\Tools\URL;
+use TheliaHybridAuth\Model\HybridAuthQuery;
 use TheliaHybridAuth\Model\ProviderConfig;
 use TheliaHybridAuth\Model\ProviderConfigQuery;
 
@@ -26,18 +27,12 @@ class TheliaHybridAuth extends BaseModule
 
     public function preActivation(ConnectionInterface $con = null)
     {
-        if (! $this->getConfigValue('is_initialized', false)) {
+        try {
+            ProviderConfigQuery::create()->findOne();
+            HybridAuthQuery::create()->findOne();
+        } catch (\Exception $e) {
             $database = new Database($con);
-
             $database->insertSql(null, array(__DIR__ . '/Config/thelia.sql'));
-        }
-
-        return true;
-    }
-
-    public function postActivation(ConnectionInterface $con = null)
-    {
-        if (! $this->getConfigValue('is_initialized')) {
             (new ProviderConfig())->setProvider('Facebook')->setEnabled(false)->save();
             (new ProviderConfig())->setProvider('Google')->setEnabled(false)->save();
             (new ProviderConfig())->setProvider('Twitter')->setEnabled(false)->save();
@@ -45,9 +40,9 @@ class TheliaHybridAuth extends BaseModule
             (new ProviderConfig())->setProvider('OpenID')->setEnabled(false)->save();
             (new ProviderConfig())->setProvider('LinkedIn')->setEnabled(false)->save();
             (new ProviderConfig())->setProvider('Foursquare')->setEnabled(false)->save();
-
-            $this->setConfigValue('is_initialized', true);
         }
+
+        return true;
     }
 
     public static function getConfigByProvider($providerName)
