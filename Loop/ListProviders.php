@@ -39,6 +39,21 @@ class ListProviders extends BaseLoop implements PropelSearchLoopInterface
         );
     }
 
+    public function parseResults(LoopResult $loopResult)
+    {
+        foreach ($loopResult->getResultDataCollection() as $provider) {
+            $loopResultRow = new LoopResultRow($provider);
+
+            $loopResultRow
+                ->set('NAME', $provider->getProvider())
+                ->set('ENABLED', $provider->getEnabled());
+
+            $loopResult->addRow($loopResultRow);
+        }
+
+        return $loopResult;
+    }
+
     public function buildModelCriteria()
     {
 
@@ -59,19 +74,5 @@ class ListProviders extends BaseLoop implements PropelSearchLoopInterface
         }
 
         return $query;
-    }
-
-    public function parseResults(LoopResult $loopResult)
-    {
-        foreach ($loopResult->getResultDataCollection() as $provider) {
-            $loopResultRow = new LoopResultRow($provider);
-
-            $loopResultRow->set('NAME', $provider->getProvider())
-                ->set('ENABLED', $provider->getEnabled());
-
-            $loopResult->addRow($loopResultRow);
-        }
-
-        return $loopResult;
     }
 }

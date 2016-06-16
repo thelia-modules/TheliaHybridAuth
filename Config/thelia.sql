@@ -35,8 +35,8 @@ CREATE TABLE `hybrid_auth`
     `customer_id` INTEGER NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `hybrid_auth_U_1` (`provider`, `customer_id`),
-    INDEX `FI_customer_id` (`customer_id`),
-    CONSTRAINT `fk_customer_id`
+    INDEX `FI_hybrid_auth_customer_id` (`customer_id`),
+    CONSTRAINT `fk_hybrid_auth_customer_id`
         FOREIGN KEY (`customer_id`)
         REFERENCES `customer` (`id`)
         ON UPDATE RESTRICT
