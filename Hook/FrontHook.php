@@ -27,9 +27,7 @@ use TheliaHybridAuth\TheliaHybridAuth;
  */
 class FrontHook extends BaseHook
 {
-    /**
-     * @var Request
-     */
+    /** @var Request */
     protected $request;
 
     public function __construct(Request $request)
@@ -37,20 +35,33 @@ class FrontHook extends BaseHook
         $this->request = $request;
     }
 
+    // Register
     public function onRegisterTop(HookRenderEvent $event)
     {
-        // we don't display register buttons when the user in registering with a provider
+        // we don't display register buttons when the user is registering with a provider
         if (strcmp($this->request->get('_route'), 'hybridauth.register.get') !== 0
             && strcmp($this->request->get('_route'), 'hybridauth.register.post') !== 0) {
             $event->add($this->render('hybrid-auth-register-buttons.html'));
         }
     }
 
+    // Login
     public function onLoginFormTop(HookRenderEvent $event)
     {
         $event->add($this->render('hybrid-auth-login-buttons.html'));
     }
 
+    public function onLoginMainBottom(HookRenderEvent $event)
+    {
+        $event->add($this->render('hybrid-auth-login-dialog.html'));
+    }
+
+    public function onLoginJavascriptInitialization(HookRenderEvent $event)
+    {
+        $event->add($this->render('hybrid-auth-login-dialog-js.html'));
+    }
+
+    // Account
     public function onAccountAdditional(HookRenderBlockEvent $event)
     {
         $event->add(array(
@@ -75,16 +86,6 @@ class FrontHook extends BaseHook
     {
         $event->add($this->addCSS('assets/css/zocial.css'));
         $event->add($this->addCSS('assets/css/style.css'));
-    }
-
-    public function onLoginMainBottom(HookRenderEvent $event)
-    {
-        $event->add($this->render('hybrid-auth-login-dialog.html'));
-    }
-
-    public function onLoginJavascriptInitialization(HookRenderEvent $event)
-    {
-        $event->add($this->render('hybrid-auth-login-dialog-js.html'));
     }
 
     public function onMainJavascriptInitialization(HookRenderEvent $event)
