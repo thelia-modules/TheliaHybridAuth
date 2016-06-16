@@ -23,7 +23,7 @@
             <unique-column name="provider"/>
             <unique-column name="customer_id"/>
         </unique>
-        <foreign-key foreignTable="customer" name="fk_customer_id" onDelete="CASCADE" onUpdate="RESTRICT">
+        <foreign-key foreignTable="customer" name="fk_hybrid_auth_customer_id" onDelete="CASCADE" onUpdate="RESTRICT">
             <reference foreign="id" local="customer_id" />
         </foreign-key>
         <foreign-key foreignTable="provider_config" name="fk_provider" onDelete="CASCADE" onUpdate="RESTRICT">
