@@ -305,7 +305,7 @@ class Configuration extends BaseAdminController
         }
 
         if ($this->getRequest()->isXmlHttpRequest()) {
-            if ($message) {
+            if (null !== $message) {
                 $response = $this->jsonResponse(json_encode(array(
                     "error" => $message
                 )), 500);
