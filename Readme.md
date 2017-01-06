@@ -17,10 +17,32 @@ Add it in your main thelia composer.json file
 composer require thelia/thelia-hybrid-auth-module:~1.0.0
 ```
 
+## Implementation in a website
+
+The first thing to do after the installation is to create an application on a social network (ex: developers.facebook.com) and enable it (view the Usage section for more information).
+
+### Login template
+
+- Check that hooks "login.top-form", "login.main-bottom" and "login.javascript-initialization" are available on your login template.
+- You can change the pop-up templates by overriding them in templates/frontOffice/default/modules/TheliaHybridAuth
+
+### Registration template
+
+Here you need to override the "register-hybrid-auth" template in templates/frontOffice/default. For this, use your actual register template and follow these steps :
+
+- Check that the hook "register.top" is available on your register template AND new register-hybrid-auth template
+- Change form name for "register.hybrid.auth"
+- Change the form action to "register/hybridauth"
+- Find the password and password_confirm fields and change their types to "hidden" and add "value="{$value}"" in the input tag
+
+### Account template
+
+Make sure the hookblock "account-additional" and the hook "account.after-javascript-include" are available in your template.
+You can override default templates in templates/frontOffice/default/modules/TheliaHybridAuth
+
 ## Usage
 
-First of all, to enable a provider, you need to create an app on the provider website.
-See the links on the list below (for more information, contact the provider)
+First of all, to enable a provider, you need to create an app on the provider website. (for more information, contact the provider)
 
 Then configure your module in modules, TheliaHybridAuth, configuration.
 
@@ -28,7 +50,7 @@ You need to enter the id and secret of your app in your module configuration. Us
 
 It is then strongly advised to test the connection before to enable your provider (with the test button). Your website will try to connect you to the provider, you may be redirected to the provider website and have to authenticate.
 
-If the test fail, you likely have type a wrong id/secret or haven't enable your website on the provider app configuration.
+If the test fail, you likely have typed a wrong id/secret or haven't enable your website on the provider app configuration.
 
 A default list of providers is available :
 
