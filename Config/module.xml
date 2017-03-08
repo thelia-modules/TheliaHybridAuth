@@ -4,10 +4,10 @@
         xsi:schemaLocation="http://thelia.net/schema/dic/module http://thelia.net/schema/dic/module/module-2_2.xsd">
     <fullnamespace>TheliaHybridAuth\TheliaHybridAuth</fullnamespace>
     <descriptive locale="en_US">
-        <title>Allows authentification from social networks</title>
+        <title>Thelia Hybrid Auth</title>
     </descriptive>
     <descriptive locale="fr_FR">
-        <title>Permet de s'authentifier avec un réseau social</title>
+        <title>Connexion avec réseaux sociaux</title>
     </descriptive>
     <languages>
         <language>en_US</language>
