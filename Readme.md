@@ -1,6 +1,6 @@
 # Thelia Hybrid Auth
 
-This module allows users to connect and register with social networks such as Facebook, Google, LinkedIn ...
+This module allows users to connect and register with social networks such as Facebook, Google, LinkedIn...
 
 ## Installation
 
