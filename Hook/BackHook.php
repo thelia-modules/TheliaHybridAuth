@@ -24,11 +24,11 @@ class BackHook extends BaseHook
 {
     public function onModuleConfiguration(HookRenderEvent $event)
     {
-        $event->add($this->render('module-configuration.html'));
+        $event->add($this->render('thelia-hybrid-auth/module-configuration.html'));
     }
 
     public function onModuleConfigJs(HookRenderEvent $event)
     {
-        $event->add($this->render('module-configuration-js.html'));
+        $event->add($this->render('thelia-hybrid-auth/module-configuration-js.html'));
     }
 }
