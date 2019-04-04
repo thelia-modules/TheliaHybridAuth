@@ -7,6 +7,9 @@ This module allows users to connect and register with social networks such as Fa
 ### Manually
 
 * Copy the module into ```<thelia_root>/local/modules/``` directory and be sure that the name of the module is TheliaHybridAuth.
+* Install the Facebook Graph SDK Library :
+  * add "facebook/graph-sdk" to your composer.json file with command : `composer require facebook/graph-sdk: "^5.4"`
+  * or download the library from <https://github.com/facebook/php-graph-sdk/releases> and install it in your `core/vendor`
 * Activate it in your thelia administration panel
 
 ### Composer
