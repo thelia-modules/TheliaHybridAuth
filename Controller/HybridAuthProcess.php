@@ -16,6 +16,5 @@ class HybridAuthProcess extends BaseFrontController
     public function processAction()
     {
         TheliaHybridAuth::initHybridAuth();
-        \Hybrid_Endpoint::process();
     }
 }
