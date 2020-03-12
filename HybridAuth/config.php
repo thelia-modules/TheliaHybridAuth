@@ -10,7 +10,15 @@
 // ----------------------------------------------------------------------------------------
 
 return array(
-    "base_url" => "http://localhost/hybridauth-git/hybridauth/",
+    // Location where to redirect users once they authenticate,
+    // For this example we choose to come back to this same script.
+    //V2//"base_url" => "http://localhost/hybridauth-git/hybridauth/",
+    'callback' => 'http://thelia.th',
+    //'callback' => 'https://www.google.com/',
+    //'callback' => 'http://localhost/hybridauth-git/hybridauth',
+    //'callback' => 'https://thelia.th/path/to/this/script.php',
+
+    // Providers specifics.
     "providers" => array(
         // openid providers
         "OpenID" => array(
@@ -58,5 +66,5 @@ return array(
     // - "info" To log info and error messages (ignore debug messages)
     "debug_mode" => false,
     // Path to file writable by the web server. Required if 'debug_mode' is not false
-    "debug_file" => "",
+    "debug_file" => __DIR__ . "/debug_file.txt",
 );

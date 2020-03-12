@@ -51,11 +51,12 @@ class HybridAuthCustomerController extends CustomerController
 
             $config = TheliaHybridAuth::getConfigByProvider($providerName);
 
-            $hybridauth = new \Hybrid_Auth($config);
+            $hybridauth = new \Hybridauth\Hybridauth($config);
+            //$hybridauth = new \Hybrid_Auth($config);
 
             $provider = $hybridauth->authenticate(
-                $providerName,
-                array(URL::getInstance()->retrieveCurrent($this->getRequest()))
+                $providerName
+                //,array(URL::getInstance()->retrieveCurrent($this->getRequest()))
             );
 
             $user_profile = $provider->getUserProfile();
@@ -127,7 +128,8 @@ class HybridAuthCustomerController extends CustomerController
 
             $config = TheliaHybridAuth::getConfigByProvider($providerName);
 
-            $hybridauth = new \Hybrid_Auth($config);
+            $hybridauth = new \Hybridauth\Hybridauth($config);
+            //$hybridauth = new \Hybrid_Auth($config);
 
             $provider = $hybridauth->authenticate(
                 $providerName,
@@ -254,7 +256,7 @@ class HybridAuthCustomerController extends CustomerController
 
     public function loginAction()
     {
-        if (! $this->getSecurityContext()->hasCustomerUser()) {
+        if (!$this->getSecurityContext()->hasCustomerUser()) {
 
             TheliaHybridAuth::initHybridAuth();
 
@@ -262,12 +264,9 @@ class HybridAuthCustomerController extends CustomerController
 
             $config = TheliaHybridAuth::getConfigByProvider($providerName);
 
-            $hybridauth = new \Hybrid_Auth($config);
+            $hybridauth = new \Hybridauth\Hybridauth($config);
 
-            $provider = $hybridauth->authenticate(
-                $providerName,
-                array(URL::getInstance()->retrieveCurrent($this->getRequest()))
-            );
+            $provider = $hybridauth->authenticate($providerName);
 
             $identifier = $provider->getUserProfile()->identifier;
 

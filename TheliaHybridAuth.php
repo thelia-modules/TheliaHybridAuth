@@ -50,7 +50,9 @@ class TheliaHybridAuth extends BaseModule
         $providerConfig = ProviderConfigQuery::create()->filterByProvider($providerName)->findOne();
 
         return array(
-            "base_url" => URL::getInstance()->getBaseUrl().'/hybridauth/process',
+            "base_url" => URL::getInstance()->getBaseUrl() . '/hybridauth/process',
+//            "callback" => '',
+            "callback" => URL::getInstance()->getBaseUrl() . "/login/hybridauth?provider=$providerName",
             "providers" => array(
                 $providerName => array(
                     "enabled" => true,
@@ -68,10 +70,8 @@ class TheliaHybridAuth extends BaseModule
     public static function initHybridAuth()
     {
         if (!class_exists('Hybrid_Auth')) {
-            require_once(__DIR__ . '/HybridAuth/Hybrid/Auth.php');
-        }
-        if (!class_exists('Hybrid_Endpoint')) {
-            require_once(__DIR__.'/HybridAuth/Hybrid/Endpoint.php');
+            require_once(__DIR__ . '/HybridAuth/Hybrid/autoload.php');
+            require_once(__DIR__ . '/HybridAuth/Hybrid/Hybridauth.php');
         }
     }
 }

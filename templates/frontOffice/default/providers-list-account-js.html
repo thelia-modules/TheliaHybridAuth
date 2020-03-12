@@ -1,18 +1,18 @@
 <script>
-    $(document).ready(function ($, $social){
-        if($social.find('.alert').length){
+    $(document).ready(function (){
+        if($('#socials-association').find('.alert').length){
             $('#account .account-socials a[href="#account-socials"]').click();
         }
-        $social.find('.remove-button').on('click', function(){
+        $('#socials-association').find('.remove-button').on('click', function(){
             $modal = '#modal-'+$(this).data('name');
-            $social.find($modal).modal('show');
-            $social.find($modal + ' .modal-remove').attr('data-action', $(this).data('action'));
-            $social.find($modal + ' .modal-remove').on('click', function() {
+            $('#socials-association').find($modal).modal('show');
+            $('#socials-association').find($modal + ' .modal-remove').attr('data-action', $(this).data('action'));
+            $('#socials-association').find($modal + ' .modal-remove').on('click', function() {
                 window.location.href = $(this).data('action');
             });
-            $social.find($modal + ' .modal-cancel').on('click', function(){
+            $('#socials-association').find($modal + ' .modal-cancel').on('click', function(){
                 $modal.modal('hide');
             });
         });
-    }(jQuery, jQuery('#socials-association')));
+    }($, $('#socials-association')));
 </script>

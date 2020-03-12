@@ -12,6 +12,7 @@
 
 namespace TheliaHybridAuth\Controller;
 
+use Hybridauth\Hybridauth;
 use Thelia\Controller\Admin\BaseAdminController;
 use Thelia\Core\Security\AccessManager;
 use Thelia\Core\Security\Resource\AdminResources;
@@ -78,12 +79,9 @@ class Configuration extends BaseAdminController
 
             $config = TheliaHybridAuth::getConfigByProvider($providerName);
 
-            $hybridauth = new \Hybrid_Auth($config);
+            $hybridauth = new Hybridauth($config);
 
-            $provider = $hybridauth->authenticate(
-                $providerName,
-                array(URL::getInstance()->retrieveCurrent($this->getRequest()))
-            );
+            $provider = $hybridauth->authenticate($providerName);
 
             $mail = ($provider->getUserProfile()->emailVerified) ?
                 $provider->getUserProfile()->emailVerified : $provider->getUserProfile()->email;
