@@ -7,11 +7,17 @@
             $modal = '#modal-'+$(this).data('name');
             $('#socials-association').find($modal).modal('show');
             $('#socials-association').find($modal + ' .modal-remove').attr('data-action', $(this).data('action'));
+
+            // Unbind click is necessary to avoid click event to be registred each time the modal is opened
+            // (user can cancel and open it many times)
+            $('#socials-association').find($modal + ' .modal-remove').unbind('click');
+            $('#socials-association').find($modal + ' .modal-cancel').unbind('click');
+
             $('#socials-association').find($modal + ' .modal-remove').on('click', function() {
                 window.location.href = $(this).data('action');
             });
             $('#socials-association').find($modal + ' .modal-cancel').on('click', function(){
-                $modal.modal('hide');
+                $('#socials-association').find($modal).modal('hide');
             });
         });
     }($, $('#socials-association')));
