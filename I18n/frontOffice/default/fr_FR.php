@@ -17,7 +17,7 @@ return array(
     'Remove' => 'Supprimer',
     'Remove %name association' => 'Supprimer l\'association %name',
     'Remove association' => 'Supprimer l\'association',
-    'There is no %store_name account with this email adress. You need to register' => 'Il n\'y a pas de compte %store_name associé à cette adresse email. Vous devez vous enregistrez',
+    'There is no %store_name account with this email adress. You need to register' => 'Il n\'y a pas de compte %store_name associé à cette adresse email. Vous devez vous enregistrer',
     'This email adress is already associated with a %store_name account, please confirm your password' => 'Cette adresse email est déjà associée a un compte %store_name, merci de confirmer votre mot de passe',
     'You are about to remove the association between your account and %name. This means you won\'t be able to connect with %name anymore, unless you associate your account again' => 'Vous êtes sur le point de supprimer l\'association entre votre compte et %name. Cela signifie que vous ne serez plus en mesure de vous connecter avec %name, sauf si vous associez à nouveau votre compte',
     'You can also associate your account with :' => 'Vous pouvez aussi associer votre compte avec :',
