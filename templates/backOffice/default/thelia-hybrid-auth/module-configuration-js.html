@@ -1,8 +1,22 @@
-{javascripts file="assets/js/bootstrap-switch/bootstrap-switch.js"}
-  <script src="{$asset_url}"></script>
+{javascripts file="assets/js/bootstrap-switch/bootstrap-switch.js" failsafe=true}
+  <script id="hybrid-auth-bootstrap-switch-js">
+    // Avoid double js file import (bootstrap-switch.js can already be loaded depending on the thelia config)
+    if ('function' !== typeof($('.make-switch').bootstrapSwitch)) {
+      var bootstrapJs = document.createElement('script');
+      bootstrapJs.type = 'text/javascript';
+      bootstrapJs.src = '{$asset_url}';
+      $('#hybrid-auth-bootstrap-switch-js').after(bootstrapJs);
+    }
+  </script>
 {/javascripts}
 <script>
   (function ($, $provider){
+
+    // Show error if bootstrap-switch.js is not found
+    if ('function' !== typeof($('.make-switch').bootstrapSwitch)) {
+      alert('Error : this plugin needs assets/js/bootstrap-switch/bootstrap-switch.js');
+      return;
+    }
 
     // create a provider
     $provider.on('click', '.js-action-create', function () {
