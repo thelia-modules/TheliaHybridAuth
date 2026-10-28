@@ -7,5 +7,6 @@
   },
   "extra": {
     "installer-name": "TheliaHybridAuth"
-  }
+  },
+  "abandoned": true
 }
