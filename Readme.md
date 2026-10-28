@@ -1,5 +1,8 @@
 # Thelia Hybrid Auth
 
+> This module is no longer maintained and will not be ported to Thelia 3. Its 2.x versions remain available on Packagist.
+> There is no replacement module.
+
 This module allows users to connect and register with social networks such as Facebook, Google, LinkedIn...
 
 ## Installation
